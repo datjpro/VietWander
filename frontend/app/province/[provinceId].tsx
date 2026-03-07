@@ -72,7 +72,7 @@ export default function ProvinceDetailScreen() {
       </ScrollView>
 
       <View style={styles.ctaWrap}>
-        <Pressable style={styles.ctaButton}>
+        <Pressable onPress={() => router.push('/checkin-camera')} style={styles.ctaButton}>
           <Ionicons color="white" name="camera" size={22} />
           <Text style={styles.ctaLabel}>Check-in Here!</Text>
         </Pressable>

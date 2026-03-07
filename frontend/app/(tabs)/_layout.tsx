@@ -1,4 +1,4 @@
-﻿import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { colors } from '../../src/theme/tokens';
 
@@ -6,6 +6,7 @@ const iconByRoute: Record<string, keyof typeof Ionicons.glyphMap> = {
   index: 'home',
   feed: 'compass',
   collection: 'bookmark',
+  leaderboard: 'trophy',
   profile: 'person',
 };
 
@@ -17,7 +18,7 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.primaryDark,
         tabBarInactiveTintColor: '#a1acb8',
         tabBarStyle: {
-          height: 76,
+          height: 78,
           paddingTop: 10,
           paddingBottom: 12,
           borderTopColor: '#edf0ed',
@@ -39,6 +40,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="index" options={{ title: 'Home' }} />
       <Tabs.Screen name="feed" options={{ title: 'Feed' }} />
       <Tabs.Screen name="collection" options={{ title: 'Collection' }} />
+      <Tabs.Screen name="leaderboard" options={{ title: 'Leaderboard' }} />
       <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
     </Tabs>
   );
