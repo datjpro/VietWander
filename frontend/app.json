@@ -12,6 +12,10 @@
     "experiments": {
       "typedRoutes": false
     },
+    "android": {
+      "package": "datjpro.demo",
+      "googleServicesFile": "./google-services.json"
+    },
     "web": {
       "bundler": "metro"
     }

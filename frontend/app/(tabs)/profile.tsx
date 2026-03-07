@@ -1,23 +1,49 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+﻿import { Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
+import { ActivityIndicator, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LandmarkCard } from '../../src/components/LandmarkCard';
 import { collectionItems, designAssets, provinces } from '../../src/data/mock';
+import { useAuth } from '../../src/providers/AuthProvider';
 import { colors } from '../../src/theme/tokens';
 
 const province = provinces[0];
 
 export default function ProfileScreen() {
+  const { user, signOutUser } = useAuth();
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      setSigningOut(true);
+      await signOutUser();
+    } finally {
+      setSigningOut(false);
+    }
+  };
+
+  const displayName = user?.displayName?.trim() || 'Du khách mới';
+  const handle = user?.email ? `@${user.email.split('@')[0]}` : '@vietwander';
+
   return (
     <SafeAreaView style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.headerCard}>
-          <Image source={{ uri: designAssets.avatar }} style={styles.avatar} />
-          <Text style={styles.name}>Alex Nguyen</Text>
-          <Text style={styles.handle}>@alex.langthang</Text>
+          {user?.photoURL ? (
+            <Image source={{ uri: user.photoURL }} style={styles.avatar} />
+          ) : (
+            <View style={[styles.avatar, styles.avatarFallback]}>
+              <Text style={styles.avatarFallbackLabel}>{displayName.charAt(0).toUpperCase()}</Text>
+            </View>
+          )}
+          <Text style={styles.name}>{displayName}</Text>
+          <Text style={styles.handle}>{handle}</Text>
           <View style={styles.levelBadge}>
             <Ionicons color={colors.primaryDark} name="flash" size={16} />
-            <Text style={styles.levelBadgeLabel}>Nhà thám hiểm</Text>
+            <Text style={styles.levelBadgeLabel}>Du khách</Text>
           </View>
+          <Pressable disabled={signingOut} onPress={handleSignOut} style={[styles.signOutButton, signingOut && styles.signOutButtonDisabled]}>
+            {signingOut ? <ActivityIndicator color={colors.primaryDark} size="small" /> : <Text style={styles.signOutLabel}>Đăng xuất</Text>}
+          </Pressable>
         </View>
 
         <View style={styles.statsRow}>
@@ -41,7 +67,7 @@ export default function ProfileScreen() {
         <Text style={styles.sectionTitle}>Tỉnh đã mở khóa</Text>
         {collectionItems.slice(0, 2).map((item) => (
           <View key={item.id} style={styles.unlockedRow}>
-            <Image source={{ uri: item.imageUrl }} style={styles.rowThumb} />
+            <Image source={{ uri: item.imageUrl || designAssets.avatar }} style={styles.rowThumb} />
             <View style={styles.rowTextWrap}>
               <Text style={styles.rowTitle}>{item.name}</Text>
               <Text style={styles.rowSubtitle}>Check-in gần nhất: {item.dateLabel}</Text>
@@ -72,6 +98,16 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.primary,
   },
+  avatarFallback: {
+    alignItems: 'center',
+    backgroundColor: '#dcfce7',
+    justifyContent: 'center',
+  },
+  avatarFallbackLabel: {
+    color: colors.primaryDark,
+    fontSize: 30,
+    fontWeight: '900',
+  },
   name: {
     marginTop: 14,
     fontSize: 24,
@@ -97,6 +133,20 @@ const styles = StyleSheet.create({
     color: colors.primaryDark,
     fontWeight: '800',
   },
+  signOutButton: {
+    marginTop: 14,
+    minWidth: 122,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#bbf7d0',
+    backgroundColor: '#f0fdf4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+  },
+  signOutButtonDisabled: { opacity: 0.75 },
+  signOutLabel: { color: colors.primaryDark, fontWeight: '800' },
   statsRow: {
     flexDirection: 'row',
     gap: 10,

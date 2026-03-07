@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "121533003805",
+    "project_id": "vietwander-fdf99",
+    "storage_bucket": "vietwander-fdf99.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121533003805:android:bc60b7201ec48e6710eef4",
+        "android_client_info": {
+          "package_name": "datjpro.demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDs-reUfpduZvY0ABHashLlri8MGOhLio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
