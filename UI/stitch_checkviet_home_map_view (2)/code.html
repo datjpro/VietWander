@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee7c",
+                        "secondary": "#ff8c42", // Orange for the capture button as requested
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102218",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .cartoon-border {
+            border: 4px solid #102218;
+            box-shadow: 4px 4px 0px #102218;
+        }
+        .sticker-float {
+            filter: drop-shadow(3px 3px 0px rgba(0,0,0,0.2));
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased overflow-hidden">
+<div class="relative flex h-screen w-full flex-col overflow-hidden">
+<!-- Full Screen Camera View Simulator -->
+<div class="absolute inset-0 z-0 bg-slate-200 dark:bg-slate-800">
+<div class="w-full h-full bg-cover bg-center" data-alt="Panoramic view of Dragon Bridge in Da Nang city" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAY4yVU6G8OK0CtH7gMp2WdYzyHViw-29zf61udhvGKSiCVr28IOoPqBL9S8zBcbED7EtoYqCk1Ghj_aKkNvlMfC79T-Doq2qT6kXiyLECjO15I8z-a2qpBRgyh1a0D2hG4U6sa7Xipoz_aD2qKRcnPxhNpAMvzCk-e5EXmz1qXhiezee0cH669iqywdh3aZmUZazKXECfXy5arlDhYAPZf7GrT2HJ-1h-i-6UDxbTejVu1SzndrV9gsGfKJpj2aIXvCOvdRZtKhQwG')"></div>
+<!-- Whimsical Cartoon Frame Overlay -->
+<div class="absolute inset-0 pointer-events-none border-[16px] border-transparent flex flex-col justify-between">
+<div class="flex justify-between">
+<span class="material-symbols-outlined text-primary text-6xl sticker-float">eco</span>
+<span class="material-symbols-outlined text-primary text-6xl sticker-float rotate-90">waves</span>
+</div>
+<div class="flex justify-between items-end">
+<span class="material-symbols-outlined text-primary text-7xl sticker-float -rotate-12">sailing</span>
+<span class="material-symbols-outlined text-primary text-6xl sticker-float">potted_plant</span>
+</div>
+</div>
+</div>
+<!-- Top App Bar -->
+<div class="relative z-20 flex items-center bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-4 m-4 rounded-xl cartoon-border justify-between">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center bg-background-light dark:bg-slate-700 rounded-full cursor-pointer">
+<span class="material-symbols-outlined">close</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-xs font-bold uppercase tracking-widest text-primary">CheckViet</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-extrabold leading-tight">Đà Nẵng</h2>
+</div>
+<div class="flex size-10 items-center justify-center bg-background-light dark:bg-slate-700 rounded-full cursor-pointer">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">help</span>
+</div>
+</div>
+<!-- Stickers Overlay -->
+<div class="relative z-10 flex-1 p-6 flex flex-col pointer-events-none">
+<!-- Floating Stickers -->
+<div class="flex justify-between mt-10">
+<div class="bg-yellow-400 p-3 rounded-full cartoon-border sticker-float -rotate-12 pointer-events-auto cursor-pointer">
+<span class="material-symbols-outlined text-white text-3xl font-fill">star</span>
+</div>
+<div class="bg-red-400 p-3 rounded-full cartoon-border sticker-float rotate-12 pointer-events-auto cursor-pointer">
+<span class="material-symbols-outlined text-white text-3xl font-fill">favorite</span>
+</div>
+</div>
+<div class="mt-auto mb-20 flex flex-col gap-4">
+<div class="self-start bg-primary text-background-dark px-6 py-2 rounded-full cartoon-border font-black text-xl sticker-float -rotate-3 pointer-events-auto cursor-pointer">
+                    Đã đến! 📍
+                </div>
+<div class="self-end bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-6 py-3 rounded-xl cartoon-border flex items-center gap-2 sticker-float rotate-3 pointer-events-auto cursor-pointer">
+<span class="material-symbols-outlined text-secondary">architecture</span>
+<span class="font-bold">Cầu Rồng</span>
+</div>
+</div>
+</div>
+<!-- Success Banner (Pop-up) -->
+<div class="absolute inset-0 z-40 flex items-center justify-center p-6 bg-background-dark/40 backdrop-blur-sm">
+<div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-lg cartoon-border p-6 flex flex-col items-center gap-4 text-center">
+<div class="relative">
+<!-- Confetti Style Elements -->
+<span class="material-symbols-outlined absolute -top-4 -left-4 text-primary animate-bounce">celebration</span>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-secondary animate-pulse">auto_awesome</span>
+<div class="size-24 bg-primary/20 rounded-full flex items-center justify-center cartoon-border border-primary">
+<span class="material-symbols-outlined text-5xl text-primary font-fill">workspace_premium</span>
+</div>
+</div>
+<div>
+<h3 class="text-slate-900 dark:text-slate-100 text-2xl font-black italic uppercase italic">Check-in thành công!</h3>
+<p class="text-slate-600 dark:text-slate-400 font-medium">Bạn đã nhận được huy hiệu 'Nhà Thám Hiểm Đà Thành'</p>
+</div>
+<div class="grid grid-cols-2 gap-3 w-full mt-2">
+<div class="bg-background-light dark:bg-slate-800 p-2 rounded-lg border-2 border-dashed border-primary flex flex-col items-center">
+<span class="text-primary font-black text-lg">+50</span>
+<span class="text-[10px] font-bold uppercase text-slate-500">Điểm Sen</span>
+</div>
+<div class="bg-background-light dark:bg-slate-800 p-2 rounded-lg border-2 border-dashed border-secondary flex flex-col items-center">
+<span class="text-secondary font-black text-lg">#12</span>
+<span class="text-[10px] font-bold uppercase text-slate-500">Xếp hạng</span>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-background-dark py-4 rounded-full cartoon-border font-black text-lg transition-transform active:scale-95">
+                    TUYỆT VỜI!
+                </button>
+</div>
+</div>
+<!-- Bottom Controls -->
+<div class="relative z-20 flex items-center justify-around p-8 pb-12 bg-gradient-to-t from-black/40 to-transparent">
+<button class="size-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border-2 border-white/40">
+<span class="material-symbols-outlined">collections</span>
+</button>
+<!-- Big Round Orange Capture Button -->
+<button class="size-24 rounded-full bg-secondary cartoon-border flex items-center justify-center group active:scale-90 transition-all">
+<div class="size-20 rounded-full border-4 border-white/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-5xl">photo_camera</span>
+</div>
+</button>
+<button class="size-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border-2 border-white/40">
+<span class="material-symbols-outlined">cached</span>
+</button>
+</div>
+</div>
+</body></html>
