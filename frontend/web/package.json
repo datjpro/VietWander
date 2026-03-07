@@ -1,11 +1,21 @@
 ﻿{
   "name": "@vietwander/web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev-server.mjs",
     "build": "node scripts/build.mjs",
     "start": "node scripts/dev-server.mjs --dist"
+  },
+  "dependencies": {
+    "firebase": "^12.10.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.9.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-react": "^7.27.1"
   }
 }
