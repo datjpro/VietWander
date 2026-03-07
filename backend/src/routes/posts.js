@@ -2,7 +2,7 @@
 import { asyncHandler } from '../lib/async-handler.js';
 import { parseLimit } from '../lib/validation.js';
 
-export function createFeedRouter({ travelService }) {
+export function createPostsRouter({ travelService }) {
   const router = Router();
 
   router.get(
@@ -15,6 +15,14 @@ export function createFeedRouter({ travelService }) {
         limit,
       });
       res.json({ items, count: items.length });
+    })
+  );
+
+  router.post(
+    '/',
+    asyncHandler(async (req, res) => {
+      const post = await travelService.createPost(req.body);
+      res.status(201).json(post);
     })
   );
 

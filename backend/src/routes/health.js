@@ -1,7 +1,11 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
 
-export const healthRouter = Router();
+export function createHealthRouter({ travelService }) {
+  const router = Router();
 
-healthRouter.get('/', (_req, res) => {
-  res.json({ status: 'ok', service: 'vietwander-backend' });
-});
+  router.get('/', async (_req, res) => {
+    res.json(await travelService.getHealth());
+  });
+
+  return router;
+}

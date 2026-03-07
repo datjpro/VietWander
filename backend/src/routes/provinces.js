@@ -1,19 +1,48 @@
-import { Router } from 'express';
-import { provinces } from '../data/mock.js';
+﻿import { Router } from 'express';
+import { asyncHandler } from '../lib/async-handler.js';
+import { parseLimit } from '../lib/validation.js';
 
-export const provincesRouter = Router();
+export function createProvincesRouter({ travelService }) {
+  const router = Router();
 
-provincesRouter.get('/', (_req, res) => {
-  res.json({ items: provinces });
-});
+  router.post(
+    '/seed',
+    asyncHandler(async (req, res) => {
+      const items = await travelService.seedProvinces({ overwrite: Boolean(req.body?.overwrite) });
+      res.status(201).json({ items, count: items.length });
+    })
+  );
 
-provincesRouter.get('/:provinceId', (req, res) => {
-  const province = provinces.find((item) => item.id === req.params.provinceId);
+  router.get(
+    '/',
+    asyncHandler(async (_req, res) => {
+      const items = await travelService.listProvinces();
+      res.json({ items, count: items.length });
+    })
+  );
 
-  if (!province) {
-    res.status(404).json({ message: 'Province not found' });
-    return;
-  }
+  router.get(
+    '/:provinceId/posts',
+    asyncHandler(async (req, res) => {
+      const limit = parseLimit(req.query.limit, 20);
+      const items = await travelService.listProvincePosts(req.params.provinceId, { limit });
+      res.json({ items, count: items.length });
+    })
+  );
 
-  res.json(province);
-});
+  router.get(
+    '/:provinceId',
+    asyncHandler(async (req, res) => {
+      res.json(await travelService.getProvince(req.params.provinceId));
+    })
+  );
+
+  router.put(
+    '/:provinceId',
+    asyncHandler(async (req, res) => {
+      res.json(await travelService.upsertProvince(req.params.provinceId, req.body));
+    })
+  );
+
+  return router;
+}

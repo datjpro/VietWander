@@ -1,8 +1,10 @@
+﻿import { env } from './config/env.js';
 import { createApp } from './app.js';
 
-const port = Number(process.env.PORT ?? 4000);
 const app = createApp();
 
-app.listen(port, () => {
-  console.log(`VietWander backend listening on http://localhost:${port}`);
+app.listen(env.port, () => {
+  console.log(
+    `VietWander backend listening on http://localhost:${env.port} (db: ${app.locals.repository.mode})`
+  );
 });
