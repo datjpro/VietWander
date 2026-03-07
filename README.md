@@ -9,6 +9,7 @@ VietWander - Lang thang Việt Nam.
 - `backend`: API Node/Express cho service layer backend.
 - `UI`: mock giao diện và ảnh tham chiếu.
 - `PROJECT.md`: blueprint sản phẩm và kỹ thuật.
+- `FIREBASE_SETUP.md`: checklist khởi tạo Firestore/Storage/Auth.
 
 ## Chạy dự án
 
