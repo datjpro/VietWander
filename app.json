@@ -1,0 +1,16 @@
+﻿{
+  "expo": {
+    "name": "VietWander",
+    "slug": "vietwander",
+    "scheme": "vietwander",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
