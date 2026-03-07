@@ -1,4 +1,4 @@
-﻿# VietWander - Lang thang Việt Nam
+# VietWander - Lang thang Việt Nam
 
 ## 1. Định vị sản phẩm
 
@@ -680,12 +680,13 @@ Trang tỉnh không nên nhồi hết mọi thứ. Ưu tiên thứ tự:
 
 ## 10. Code mẫu React Native Expo cho bản đồ hoạt họa clickable
 
-Repo đã kèm mẫu tại:
+UI hiện được triển khai trong `frontend/` với các màn hình chính tại:
 
-- `examples/expo-svg-map/InteractiveVietnamMap.tsx`
-- `examples/expo-svg-map/README.md`
+- `frontend/app/(tabs)/index.tsx`
+- `frontend/app/province/[provinceId].tsx`
+- `frontend/src/components/HomeMapCard.tsx`
 
-Giải pháp dùng `react-native-svg` + `react-native-reanimated` + `react-native-gesture-handler`.
+Phiên bản hiện tại ưu tiên web/mobile UI trước. Nếu muốn quay lại hướng bản đồ SVG tương tác đầy đủ theo tỉnh, có thể tiếp tục mở rộng từ component FE hiện có bằng `react-native-svg` + `react-native-reanimated` + `react-native-gesture-handler`.
 
 Điểm phù hợp cho MVP:
 

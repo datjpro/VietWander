@@ -1,19 +1,25 @@
-﻿# VietWander
+# VietWander
 
 VietWander - Lang thang Việt Nam.
 
-## Tài liệu chính
+## Cấu trúc repo
 
-- Blueprint sản phẩm và kỹ thuật: `PROJECT.md`
-- Mẫu bản đồ Expo SVG: `examples/expo-svg-map/InteractiveVietnamMap.tsx`
-- Hướng dẫn dùng mẫu bản đồ: `examples/expo-svg-map/README.md`
+- `frontend/`: ứng dụng Expo Router cho mobile và web
+- `backend/`: API Node/Express tách riêng cho dữ liệu và service layer
+- `UI/`: mock HTML + screenshot dùng làm design source
+- `PROJECT.md`: blueprint sản phẩm và kỹ thuật
 
-## Phạm vi hiện tại
+## Chạy dự án
 
-Repo hiện tập trung vào:
+```bash
+npm install --cache .npm-cache
+npm run dev:web
+npm run dev:api
+```
 
-- phân tích ý tưởng sản phẩm
-- schema Firestore chi tiết cho MVP
-- UI/UX flow chính
-- mẫu code bản đồ tỉnh clickable cho React Native Expo
-- ước tính timeline, chi phí, monetize và marketing ban đầu
+## Lệnh chính
+
+- `npm run dev:web`: chạy UI trên web bằng Expo
+- `npm run dev:mobile`: chạy UI cho mobile/dev server Expo
+- `npm run dev:api`: chạy backend local tại `http://localhost:4000`
+- `npm run typecheck`: kiểm tra TypeScript cho cả FE và BE

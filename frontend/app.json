@@ -1,4 +1,4 @@
-﻿{
+{
   "expo": {
     "name": "VietWander",
     "slug": "vietwander",
@@ -11,6 +11,9 @@
     ],
     "experiments": {
       "typedRoutes": false
+    },
+    "web": {
+      "bundler": "metro"
     }
   }
 }
