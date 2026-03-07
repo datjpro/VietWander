@@ -7,10 +7,16 @@ type HomeMapCardProps = {
   onPress?: () => void;
 };
 
-const pins = [
-  { top: '12%', left: '47%', icon: 'camera' as const },
-  { top: '43%', left: '57%', icon: 'water' as const },
-  { top: '73%', left: '41%', icon: 'leaf' as const },
+type MapPin = {
+  top: `${number}%`;
+  left: `${number}%`;
+  icon: keyof typeof Ionicons.glyphMap;
+};
+
+const pins: MapPin[] = [
+  { top: '12%', left: '47%', icon: 'camera' },
+  { top: '43%', left: '57%', icon: 'water' },
+  { top: '73%', left: '41%', icon: 'leaf' },
 ];
 
 export function HomeMapCard({ imageUrl, onPress }: HomeMapCardProps) {
