@@ -7,7 +7,6 @@
   --muted: #64748b;
   --green: #22c55e;
   --green-dark: #16a34a;
-  --orange: #f97316;
   --shadow: 0 18px 45px rgba(20, 44, 27, 0.08);
 }
 
@@ -18,7 +17,8 @@ body {
   color: var(--text);
   background: linear-gradient(180deg, #eef9f2 0%, var(--bg) 28%);
 }
-button, input { font: inherit; }
+button,
+input { font: inherit; }
 button {
   border: 0;
   border-radius: 16px;
@@ -38,8 +38,10 @@ input {
   background: #fbfdfb;
 }
 label { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+img { display: block; }
+#root { min-height: 100vh; }
 .shell {
-  width: min(1440px, 100% - 32px);
+  width: min(1440px, calc(100% - 32px));
   margin: 24px auto;
   display: grid;
   grid-template-columns: 360px minmax(0, 1fr);
@@ -59,10 +61,7 @@ label { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
   display: grid;
   gap: 18px;
 }
-.content {
-  display: grid;
-  gap: 20px;
-}
+.content { display: grid; gap: 20px; }
 .hero {
   padding: 24px;
   display: flex;
@@ -86,7 +85,11 @@ label { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
 .status-item span,
 .helper,
 .muted { color: var(--muted); }
-.hero-stats strong { display: block; margin-top: 8px; font-size: 1.4rem; }
+.hero-stats strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.4rem;
+}
 .eyebrow {
   margin: 0 0 8px;
   color: var(--green-dark);
@@ -148,8 +151,7 @@ h3 { font-size: 1.15rem; }
 .collection-grid {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
-.feed-meta,
-.rank-meta {
+.feed-meta {
   display: flex;
   justify-content: space-between;
   gap: 8px;
@@ -160,6 +162,11 @@ h3 { font-size: 1.15rem; }
 .rank-card {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+.rank-left {
+  display: flex;
+  gap: 14px;
   align-items: center;
 }
 .rank-badge {
@@ -175,6 +182,13 @@ h3 { font-size: 1.15rem; }
 .helper { min-height: 20px; font-size: 0.9rem; }
 .helper.error { color: #b91c1c; }
 .helper.success { color: var(--green-dark); }
+.mt-12 { margin-top: 12px; }
+code {
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 2px 6px;
+  font-family: Consolas, monospace;
+}
 @media (max-width: 1120px) {
   .shell { grid-template-columns: 1fr; }
   .sidebar { position: static; }
@@ -186,4 +200,5 @@ h3 { font-size: 1.15rem; }
   .shell { width: min(100% - 20px, 1440px); margin: 10px auto 24px; }
   .hero-stats { grid-template-columns: 1fr; }
   .button-row { flex-direction: column; }
+  .feed-meta { flex-direction: column; }
 }

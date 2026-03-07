@@ -1,431 +1,328 @@
-﻿import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js';
+﻿import React, { useEffect, useMemo, useState } from 'https://esm.sh/react@19';
+import { createRoot } from 'https://esm.sh/react-dom@19/client';
+import htm from 'https://esm.sh/htm@3.1.1';
 import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile,
-} from 'https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js';
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  setDoc,
-  where,
-} from 'https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js';
+  createDemoCheckin,
+  ensureUserProfile,
+  fallbackCollectionImage,
+  fallbackImage,
+  formatCompactNumber,
+  formatDate,
+  getLevelTitle,
+  loginWithEmail,
+  logoutCurrentUser,
+  observeAuth,
+  registerWithEmail,
+  subscribeCollection,
+  subscribeLeaderboard,
+  subscribePosts,
+  subscribeProfile,
+} from './firebase.js';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyCevIsxM9c-dU5kswzg6AiXY5sFVzxtAOQ',
-  authDomain: 'vietwander-fdf99.firebaseapp.com',
-  projectId: 'vietwander-fdf99',
-  storageBucket: 'vietwander-fdf99.firebasestorage.app',
-  messagingSenderId: '121533003805',
-  appId: '1:121533003805:web:bafe967b94f4a4fe10eef4',
-  measurementId: 'G-290RLYJ2E4',
-};
+const html = htm.bind(React.createElement);
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const elements = {
-  authStatus: document.querySelector('#auth-status'),
-  currentUser: document.querySelector('#current-user'),
-  authForm: document.querySelector('#auth-form'),
-  displayName: document.querySelector('#display-name'),
-  email: document.querySelector('#email'),
-  password: document.querySelector('#password'),
-  loginButton: document.querySelector('#login-button'),
-  registerButton: document.querySelector('#register-button'),
-  logoutButton: document.querySelector('#logout-button'),
-  authMessage: document.querySelector('#auth-message'),
-  demoCheckinButton: document.querySelector('#demo-checkin-button'),
-  demoMessage: document.querySelector('#demo-message'),
-  statProvinces: document.querySelector('#stat-provinces'),
-  statCheckins: document.querySelector('#stat-checkins'),
-  statLevel: document.querySelector('#stat-level'),
-  feedList: document.querySelector('#feed-list'),
-  leaderboardList: document.querySelector('#leaderboard-list'),
-  collectionList: document.querySelector('#collection-list'),
-};
-
-const fallbackImage = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80';
-const fallbackCollectionImage = 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80';
-const state = {
-  user: null,
-  profile: null,
-  posts: [],
-  leaderboard: [],
-  collection: [],
-};
-
-let unsubscribePosts = null;
-let unsubscribeLeaderboard = null;
-let unsubscribeProfile = null;
-let unsubscribeCollection = null;
-
-function setMessage(element, message, type = '') {
-  element.textContent = message || '';
-  element.className = `helper${type ? ` ${type}` : ''}`;
+function Message({ text, type = '' }) {
+  return html`<p className=${`helper${type ? ` ${type}` : ''}`}>${text || ''}</p>`;
 }
 
-function getLevelTitle(visitedProvinceCount) {
-  if (visitedProvinceCount >= 45) return 'Huyền thoại xuyên Việt';
-  if (visitedProvinceCount >= 20) return 'Nhà thám hiểm';
-  if (visitedProvinceCount >= 8) return 'Người săn hành trình';
-  return 'Du khách';
+function FeedCard({ post }) {
+  return html`
+    <article className="feed-card">
+      <p className="eyebrow">${post.hashtag || '#VietWanderCheckin'}</p>
+      <h3>${post.authorName || 'VietWander Explorer'}</h3>
+      <div className="feed-meta">
+        <span>${post.landmarkName || 'Điểm check-in'}, ${post.provinceName || 'Việt Nam'}</span>
+        <span>${formatCompactNumber(post.likeCount || 0)} ❤️ · ${formatCompactNumber(post.commentCount || 0)} 💬</span>
+      </div>
+      <img alt=${post.landmarkName || 'check-in'} src=${post.imageUrl || fallbackImage} />
+      <p className="muted mt-12">${post.caption || 'Bài viết chưa có caption.'}</p>
+    </article>
+  `;
 }
 
-function formatCompactNumber(value) {
-  if (value >= 1000) {
-    return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1).replace('.0', '')}k`;
-  }
-
-  return String(value ?? 0);
+function RankCard({ entry, rank }) {
+  return html`
+    <article className="rank-card">
+      <div className="rank-left">
+        <div className="rank-badge">${rank}</div>
+        <div>
+          <h3>${entry.displayName || 'Du khách mới'}</h3>
+          <p className="muted">${entry.levelTitle || getLevelTitle(entry.visitedProvinceCount || 0)}</p>
+        </div>
+      </div>
+      <strong>${entry.visitedProvinceCount || 0}/63</strong>
+    </article>
+  `;
 }
 
-function formatDate(value) {
-  const date = value?.toDate ? value.toDate() : value instanceof Date ? value : null;
-
-  if (!date) {
-    return 'Mới check-in';
-  }
-
-  return new Intl.DateTimeFormat('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(date);
+function CollectionCard({ item }) {
+  return html`
+    <article className="collection-card">
+      <p className="eyebrow">${item.provinceId || 'province'}</p>
+      <h3>${item.provinceName || 'Địa danh mới'}</h3>
+      <p className="muted">Check-in gần nhất: ${formatDate(item.createdAt)}</p>
+      <img alt=${item.provinceName || 'check-in'} src=${item.imageUrl || fallbackCollectionImage} />
+    </article>
+  `;
 }
 
-function renderStats() {
-  const profile = state.profile || {
-    visitedProvinceCount: 0,
-    verifiedCheckinCount: 0,
-    levelTitle: 'Du khách',
-  };
+function App() {
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [collection, setCollection] = useState([]);
+  const [authForm, setAuthForm] = useState({ displayName: '', email: '', password: '' });
+  const [authMessage, setAuthMessage] = useState({ text: '', type: '' });
+  const [demoMessage, setDemoMessage] = useState({ text: '', type: '' });
 
-  elements.statProvinces.textContent = String(profile.visitedProvinceCount || 0);
-  elements.statCheckins.textContent = String(profile.verifiedCheckinCount || 0);
-  elements.statLevel.textContent = profile.levelTitle || 'Du khách';
-}
+  useEffect(() => {
+    const unsubscribePosts = subscribePosts(setPosts, () => setPosts([]));
+    const unsubscribeLeaderboard = subscribeLeaderboard(setLeaderboard, () => setLeaderboard([]));
 
-function renderFeed() {
-  if (!state.posts.length) {
-    elements.feedList.innerHTML = '<p class="muted">Chưa có bài đăng nào trong `posts`.</p>';
-    return;
-  }
+    return () => {
+      unsubscribePosts();
+      unsubscribeLeaderboard();
+    };
+  }, []);
 
-  elements.feedList.innerHTML = state.posts
-    .map(
-      (post) => `
-        <article class="feed-card">
-          <p class="eyebrow">${post.hashtag || '#VietWanderCheckin'}</p>
-          <h3>${post.authorName || 'VietWander Explorer'}</h3>
-          <div class="feed-meta">
-            <span>${post.landmarkName || 'Điểm check-in'}, ${post.provinceName || 'Việt Nam'}</span>
-            <span>${formatCompactNumber(post.likeCount || 0)} ❤️ · ${formatCompactNumber(post.commentCount || 0)} 💬</span>
-          </div>
-          <img src="${post.imageUrl || fallbackImage}" alt="${post.landmarkName || 'check-in'}" />
-          <p class="muted" style="margin-top: 12px;">${post.caption || 'Bài viết chưa có caption.'}</p>
-        </article>
-      `
-    )
-    .join('');
-}
+  useEffect(() => {
+    let unsubscribeProfile = () => {};
+    let unsubscribeCollection = () => {};
 
-function renderLeaderboard() {
-  if (!state.leaderboard.length) {
-    elements.leaderboardList.innerHTML = '<p class="muted">Chưa có dữ liệu `users` để xếp hạng.</p>';
-    return;
-  }
+    const unsubscribeAuth = observeAuth(async (nextUser) => {
+      setUser(nextUser);
+      unsubscribeProfile();
+      unsubscribeCollection();
 
-  elements.leaderboardList.innerHTML = state.leaderboard
-    .map(
-      (entry, index) => `
-        <article class="rank-card">
-          <div style="display:flex; gap:14px; align-items:center;">
-            <div class="rank-badge">${index + 1}</div>
-            <div>
-              <h3>${entry.displayName || 'Du khách mới'}</h3>
-              <p class="muted">${entry.levelTitle || getLevelTitle(entry.visitedProvinceCount || 0)}</p>
-            </div>
-          </div>
-          <strong>${entry.visitedProvinceCount || 0}/63</strong>
-        </article>
-      `
-    )
-    .join('');
-}
-
-function renderCollection() {
-  if (!state.user) {
-    elements.collectionList.innerHTML = '<p class="muted">Đăng nhập để xem check-in cá nhân.</p>';
-    return;
-  }
-
-  if (!state.collection.length) {
-    elements.collectionList.innerHTML = '<p class="muted">Bạn chưa có check-in nào. Hãy tạo một check-in demo.</p>';
-    return;
-  }
-
-  const grouped = new Map();
-
-  [...state.collection]
-    .sort((left, right) => {
-      const leftTime = left.createdAt?.toDate ? left.createdAt.toDate().getTime() : 0;
-      const rightTime = right.createdAt?.toDate ? right.createdAt.toDate().getTime() : 0;
-      return rightTime - leftTime;
-    })
-    .forEach((item) => {
-      if (!grouped.has(item.provinceId)) {
-        grouped.set(item.provinceId, item);
+      if (!nextUser) {
+        setProfile(null);
+        setCollection([]);
+        return;
       }
+
+      await ensureUserProfile(nextUser);
+      unsubscribeProfile = subscribeProfile(nextUser.uid, setProfile, () => setProfile(null));
+      unsubscribeCollection = subscribeCollection(nextUser.uid, setCollection, () => setCollection([]));
     });
 
-  elements.collectionList.innerHTML = [...grouped.values()]
-    .map(
-      (item) => `
-        <article class="collection-card">
-          <p class="eyebrow">${item.provinceId || 'province'}</p>
-          <h3>${item.provinceName || 'Địa danh mới'}</h3>
-          <p class="muted">Check-in gần nhất: ${formatDate(item.createdAt)}</p>
-          <img src="${item.imageUrl || fallbackCollectionImage}" alt="${item.provinceName || 'check-in'}" />
-        </article>
-      `
-    )
-    .join('');
-}
+    return () => {
+      unsubscribeAuth();
+      unsubscribeProfile();
+      unsubscribeCollection();
+    };
+  }, []);
 
-function renderAll() {
-  renderStats();
-  renderFeed();
-  renderLeaderboard();
-  renderCollection();
-}
+  const groupedCollection = useMemo(() => {
+    const grouped = new Map();
 
-function subscribePublicCollections() {
-  unsubscribePosts?.();
-  unsubscribeLeaderboard?.();
+    [...collection]
+      .sort((left, right) => {
+        const leftTime = left.createdAt?.toDate ? left.createdAt.toDate().getTime() : 0;
+        const rightTime = right.createdAt?.toDate ? right.createdAt.toDate().getTime() : 0;
+        return rightTime - leftTime;
+      })
+      .forEach((item) => {
+        if (!grouped.has(item.provinceId)) {
+          grouped.set(item.provinceId, item);
+        }
+      });
 
-  unsubscribePosts = onSnapshot(
-    query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(8)),
-    (snapshot) => {
-      state.posts = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
-      renderFeed();
-    },
-    () => {
-      elements.feedList.innerHTML = '<p class="muted">Không đọc được collection `posts`. Kiểm tra Firestore rules/index.</p>';
-    }
-  );
+    return [...grouped.values()];
+  }, [collection]);
 
-  unsubscribeLeaderboard = onSnapshot(
-    query(collection(db, 'users'), orderBy('visitedProvinceCount', 'desc'), limit(10)),
-    (snapshot) => {
-      state.leaderboard = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
-      renderLeaderboard();
-    },
-    () => {
-      elements.leaderboardList.innerHTML = '<p class="muted">Không đọc được collection `users`. Kiểm tra Firestore rules.</p>';
-    }
-  );
-}
-
-function clearUserSubscriptions() {
-  unsubscribeProfile?.();
-  unsubscribeCollection?.();
-  unsubscribeProfile = null;
-  unsubscribeCollection = null;
-}
-
-function subscribeUserCollections(uid) {
-  clearUserSubscriptions();
-
-  unsubscribeProfile = onSnapshot(
-    doc(db, 'users', uid),
-    (snapshot) => {
-      const data = snapshot.exists() ? snapshot.data() : null;
-      state.profile = data
-        ? {
-            ...data,
-            levelTitle: data.levelTitle || getLevelTitle(data.visitedProvinceCount || 0),
-          }
-        : null;
-      renderStats();
-    },
-    () => {
-      state.profile = null;
-      renderStats();
-    }
-  );
-
-  unsubscribeCollection = onSnapshot(
-    query(collection(db, 'checkins'), where('userId', '==', uid), orderBy('createdAt', 'desc'), limit(20)),
-    (snapshot) => {
-      state.collection = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
-      renderCollection();
-    },
-    () => {
-      elements.collectionList.innerHTML = '<p class="muted">Không đọc được collection `checkins`. Hãy deploy composite index.</p>';
-    }
-  );
-}
-
-async function ensureUserProfile(user, displayNameOverride = '') {
-  const profileRef = doc(db, 'users', user.uid);
-  const existing = await getDoc(profileRef);
-
-  if (existing.exists()) {
-    return existing.data();
-  }
-
-  const displayName = displayNameOverride || user.displayName || user.email?.split('@')[0] || 'Du khách mới';
-  const payload = {
-    uid: user.uid,
-    displayName,
-    email: user.email || null,
-    photoURL: user.photoURL || null,
-    level: 1,
-    levelTitle: 'Du khách',
-    visitedProvinceCount: 0,
-    verifiedCheckinCount: 0,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
+  const stats = {
+    visitedProvinceCount: profile?.visitedProvinceCount || 0,
+    verifiedCheckinCount: profile?.verifiedCheckinCount || 0,
+    levelTitle: profile?.levelTitle || 'Du khách',
   };
 
-  await setDoc(profileRef, payload, { merge: true });
-  return payload;
-}
-
-async function createDemoCheckin() {
-  if (!state.user) {
-    throw new Error('Bạn cần đăng nhập trước khi tạo check-in demo.');
-  }
-
-  const profile = (await ensureUserProfile(state.user)) || {};
-  const snapshot = await getDocs(query(collection(db, 'checkins'), where('userId', '==', state.user.uid)));
-  const hasVisitedDanang = snapshot.docs.some((item) => item.data().provinceId === 'danang');
-  const nextVisitedProvinceCount = (profile.visitedProvinceCount || 0) + (hasVisitedDanang ? 0 : 1);
-  const nextVerifiedCheckinCount = (profile.verifiedCheckinCount || 0) + 1;
-  const nextLevelTitle = getLevelTitle(nextVisitedProvinceCount);
-
-  const checkinPayload = {
-    userId: state.user.uid,
-    authorName: state.user.displayName || profile.displayName || 'Du khách mới',
-    provinceId: 'danang',
-    provinceName: 'Đà Nẵng',
-    landmarkId: 'dragon-bridge',
-    landmarkName: 'Cầu Rồng',
-    hashtag: '#DaNangCheckin',
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
-    createdAt: serverTimestamp(),
+  const handleChange = (field) => (event) => {
+    setAuthForm((current) => ({ ...current, [field]: event.target.value }));
   };
 
-  await addDoc(collection(db, 'checkins'), checkinPayload);
-  await addDoc(collection(db, 'posts'), {
-    ...checkinPayload,
-    caption: 'Check-in demo từ web dashboard VietWander.',
-    likeCount: 0,
-    commentCount: 0,
-  });
+  const handleLogin = async (event) => {
+    event.preventDefault();
 
-  await setDoc(
-    doc(db, 'users', state.user.uid),
-    {
-      uid: state.user.uid,
-      displayName: state.user.displayName || profile.displayName || 'Du khách mới',
-      email: state.user.email || null,
-      photoURL: state.user.photoURL || null,
-      visitedProvinceCount: nextVisitedProvinceCount,
-      verifiedCheckinCount: nextVerifiedCheckinCount,
-      levelTitle: nextLevelTitle,
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true }
-  );
-}
+    try {
+      setAuthMessage({ text: 'Đang đăng nhập...', type: 'success' });
+      await loginWithEmail(authForm);
+      setAuthMessage({ text: 'Đăng nhập thành công.', type: 'success' });
+    } catch (error) {
+      setAuthMessage({ text: error.message, type: 'error' });
+    }
+  };
 
-async function handleLogin(event) {
-  event.preventDefault();
-  const email = elements.email.value.trim();
-  const password = elements.password.value;
+  const handleRegister = async () => {
+    try {
+      setAuthMessage({ text: 'Đang tạo tài khoản...', type: 'success' });
+      await registerWithEmail(authForm);
+      setAuthMessage({ text: 'Tạo tài khoản thành công.', type: 'success' });
+    } catch (error) {
+      setAuthMessage({ text: error.message, type: 'error' });
+    }
+  };
 
-  try {
-    setMessage(elements.authMessage, 'Đang đăng nhập...', 'success');
-    await signInWithEmailAndPassword(auth, email, password);
-    setMessage(elements.authMessage, 'Đăng nhập thành công.', 'success');
-  } catch (error) {
-    setMessage(elements.authMessage, error.message, 'error');
-  }
-}
+  const handleLogout = async () => {
+    try {
+      await logoutCurrentUser();
+      setAuthMessage({ text: 'Bạn đã đăng xuất.', type: 'success' });
+    } catch (error) {
+      setAuthMessage({ text: error.message, type: 'error' });
+    }
+  };
 
-async function handleRegister() {
-  const displayName = elements.displayName.value.trim();
-  const email = elements.email.value.trim();
-  const password = elements.password.value;
-
-  try {
-    setMessage(elements.authMessage, 'Đang tạo tài khoản...', 'success');
-    const credential = await createUserWithEmailAndPassword(auth, email, password);
-
-    if (displayName) {
-      await updateProfile(credential.user, { displayName });
+  const handleDemoCheckin = async () => {
+    if (!user) {
+      setDemoMessage({ text: 'Bạn cần đăng nhập trước khi tạo check-in demo.', type: 'error' });
+      return;
     }
 
-    await ensureUserProfile(credential.user, displayName);
-    setMessage(elements.authMessage, 'Tạo tài khoản thành công.', 'success');
-  } catch (error) {
-    setMessage(elements.authMessage, error.message, 'error');
-  }
+    try {
+      setDemoMessage({ text: 'Đang tạo check-in demo...', type: 'success' });
+      await createDemoCheckin(user);
+      setDemoMessage({ text: 'Đã tạo check-in demo vào Firestore.', type: 'success' });
+    } catch (error) {
+      setDemoMessage({ text: error.message, type: 'error' });
+    }
+  };
+
+  return html`
+    <div className="shell">
+      <aside className="sidebar card">
+        <div>
+          <p className="eyebrow">Frontend Web React</p>
+          <h1>VietWander Dashboard</h1>
+          <p className="muted">
+            Web riêng bằng React JS để quản trị nhanh feed cộng đồng, leaderboard và bộ sưu tập check-in qua Firebase.
+          </p>
+        </div>
+
+        <div className="status-list">
+          <div className="status-item">
+            <span>Firebase project</span>
+            <strong>vietwander-fdf99</strong>
+          </div>
+          <div className="status-item">
+            <span>Auth trạng thái</span>
+            <strong>${user ? 'Đã đăng nhập' : 'Chưa đăng nhập'}</strong>
+          </div>
+          <div className="status-item">
+            <span>Người dùng hiện tại</span>
+            <strong>${user?.email || 'Chưa đăng nhập'}</strong>
+          </div>
+        </div>
+
+        <section className="card auth-card">
+          <h2>Đăng nhập / đăng ký</h2>
+          <form className="form-grid" onSubmit=${handleLogin}>
+            <label>
+              Tên hiển thị
+              <input onInput=${handleChange('displayName')} placeholder="Nhà thám hiểm Việt Nam" type="text" value=${authForm.displayName} />
+            </label>
+            <label>
+              Email
+              <input onInput=${handleChange('email')} placeholder="hello@vietwander.vn" required type="email" value=${authForm.email} />
+            </label>
+            <label>
+              Mật khẩu
+              <input onInput=${handleChange('password')} placeholder="••••••••" required type="password" value=${authForm.password} />
+            </label>
+            <div className="button-row">
+              <button type="submit">Đăng nhập</button>
+              <button className="secondary" onClick=${handleRegister} type="button">Đăng ký</button>
+              <button className="ghost" onClick=${handleLogout} type="button">Đăng xuất</button>
+            </div>
+            <${Message} text=${authMessage.text} type=${authMessage.type} />
+          </form>
+        </section>
+
+        <section className="card demo-card">
+          <h2>Check-in demo</h2>
+          <p className="muted">
+            Tạo thử một check-in Đà Nẵng để kiểm tra Firestore realtime giữa web React và mobile Expo.
+          </p>
+          <button className="primary-block" onClick=${handleDemoCheckin} type="button">Tạo check-in demo</button>
+          <${Message} text=${demoMessage.text} type=${demoMessage.type} />
+        </section>
+      </aside>
+
+      <main className="content">
+        <section className="hero card">
+          <div>
+            <p className="eyebrow">React + Firebase</p>
+            <h2>Web workspace giờ là React JS độc lập</h2>
+            <p className="muted">
+              Dùng component React để tách web riêng khỏi mobile, sẵn sàng mở rộng dashboard admin, moderation và analytics.
+            </p>
+          </div>
+          <div className="hero-stats">
+            <div>
+              <span>Tỉnh đã mở khóa</span>
+              <strong>${stats.visitedProvinceCount}</strong>
+            </div>
+            <div>
+              <span>Check-in xác thực</span>
+              <strong>${stats.verifiedCheckinCount}</strong>
+            </div>
+            <div>
+              <span>Level</span>
+              <strong>${stats.levelTitle}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section className="grid-two">
+          <section className="card section-card">
+            <div className="section-header">
+              <div>
+                <p className="eyebrow">Realtime feed</p>
+                <h3>Ảnh check-in mới nhất</h3>
+              </div>
+              <span className="pill">posts / createdAt desc</span>
+            </div>
+            <div className="list">
+              ${posts.length ? posts.map((post) => html`<${FeedCard} key=${post.id} post=${post} />`) : html`<p className="muted">Chưa có bài đăng nào trong 
+                <code>posts</code>.
+              </p>`}
+            </div>
+          </section>
+
+          <section className="card section-card">
+            <div className="section-header">
+              <div>
+                <p className="eyebrow">Leaderboard</p>
+                <h3>Top người dùng</h3>
+              </div>
+              <span className="pill">users / visitedProvinceCount</span>
+            </div>
+            <div className="list">
+              ${leaderboard.length
+                ? leaderboard.map((entry, index) => html`<${RankCard} entry=${entry} key=${entry.id} rank=${index + 1} />`)
+                : html`<p className="muted">Chưa có dữ liệu <code>users</code> để xếp hạng.</p>`}
+            </div>
+          </section>
+        </section>
+
+        <section className="card section-card">
+          <div className="section-header">
+            <div>
+              <p className="eyebrow">My collection</p>
+              <h3>Bộ sưu tập check-in của tôi</h3>
+            </div>
+            <span className="pill">checkins / userId</span>
+          </div>
+          <div className="collection-grid">
+            ${!user
+              ? html`<p className="muted">Đăng nhập để xem check-in cá nhân.</p>`
+              : groupedCollection.length
+                ? groupedCollection.map((item) => html`<${CollectionCard} item=${item} key=${item.id} />`)
+                : html`<p className="muted">Bạn chưa có check-in nào. Hãy tạo một check-in demo.</p>`}
+          </div>
+        </section>
+      </main>
+    </div>
+  `;
 }
 
-async function handleLogout() {
-  try {
-    await signOut(auth);
-    setMessage(elements.authMessage, 'Bạn đã đăng xuất.', 'success');
-  } catch (error) {
-    setMessage(elements.authMessage, error.message, 'error');
-  }
-}
-
-elements.authForm.addEventListener('submit', handleLogin);
-elements.registerButton.addEventListener('click', handleRegister);
-elements.logoutButton.addEventListener('click', handleLogout);
-elements.demoCheckinButton.addEventListener('click', async () => {
-  try {
-    setMessage(elements.demoMessage, 'Đang tạo check-in demo...', 'success');
-    await createDemoCheckin();
-    setMessage(elements.demoMessage, 'Đã tạo check-in demo vào Firestore.', 'success');
-  } catch (error) {
-    setMessage(elements.demoMessage, error.message, 'error');
-  }
-});
-
-onAuthStateChanged(auth, async (user) => {
-  state.user = user;
-  elements.authStatus.textContent = user ? 'Đã đăng nhập' : 'Chưa đăng nhập';
-  elements.currentUser.textContent = user?.email || 'Chưa đăng nhập';
-
-  if (user) {
-    await ensureUserProfile(user);
-    subscribeUserCollections(user.uid);
-  } else {
-    state.profile = null;
-    state.collection = [];
-    clearUserSubscriptions();
-  }
-
-  renderAll();
-});
-
-subscribePublicCollections();
-renderAll();
+createRoot(document.getElementById('root')).render(html`<${App} />`);
