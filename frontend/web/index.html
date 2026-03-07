@@ -1,0 +1,127 @@
+﻿<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VietWander Web</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar card">
+        <div>
+          <p class="eyebrow">Frontend Web</p>
+          <h1>VietWander Dashboard</h1>
+          <p class="muted">Web riêng cho quản trị nội dung cộng đồng, feed realtime và theo dõi bộ sưu tập check-in.</p>
+        </div>
+
+        <div class="status-list">
+          <div class="status-item">
+            <span>Firebase project</span>
+            <strong>vietwander-fdf99</strong>
+          </div>
+          <div class="status-item">
+            <span>Auth trạng thái</span>
+            <strong id="auth-status">Đang kiểm tra...</strong>
+          </div>
+          <div class="status-item">
+            <span>Người dùng hiện tại</span>
+            <strong id="current-user">Chưa đăng nhập</strong>
+          </div>
+        </div>
+
+        <div class="card auth-card">
+          <h2>Đăng nhập / đăng ký</h2>
+          <form id="auth-form" class="form-grid">
+            <label>
+              Tên hiển thị
+              <input id="display-name" type="text" placeholder="Nhà thám hiểm Việt Nam" />
+            </label>
+            <label>
+              Email
+              <input id="email" type="email" placeholder="hello@vietwander.vn" required />
+            </label>
+            <label>
+              Mật khẩu
+              <input id="password" type="password" placeholder="••••••••" required />
+            </label>
+            <div class="button-row">
+              <button id="login-button" type="submit">Đăng nhập</button>
+              <button id="register-button" type="button" class="secondary">Đăng ký</button>
+              <button id="logout-button" type="button" class="ghost">Đăng xuất</button>
+            </div>
+            <p id="auth-message" class="helper"></p>
+          </form>
+        </div>
+
+        <div class="card demo-card">
+          <h2>Check-in demo</h2>
+          <p class="muted">Tạo thử một check-in Đà Nẵng để kiểm tra luồng Firestore, feed và bảng xếp hạng.</p>
+          <button id="demo-checkin-button" class="primary-block">Tạo check-in demo</button>
+          <p id="demo-message" class="helper"></p>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="hero card">
+          <div>
+            <p class="eyebrow">Web + Mobile tách riêng</p>
+            <h2>FE web và mobile đã tách workspace rõ ràng</h2>
+            <p class="muted">Mobile dùng Expo Router. Web dùng static SPA nhẹ để đọc/ghi Firebase trực tiếp, phù hợp cho dashboard cộng đồng và kiểm tra dữ liệu nhanh.</p>
+          </div>
+          <div class="hero-stats">
+            <div>
+              <span>Tỉnh đã mở khóa</span>
+              <strong id="stat-provinces">0</strong>
+            </div>
+            <div>
+              <span>Check-in xác thực</span>
+              <strong id="stat-checkins">0</strong>
+            </div>
+            <div>
+              <span>Level</span>
+              <strong id="stat-level">Du khách</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="grid-two">
+          <section class="card section-card">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Realtime feed</p>
+                <h3>Ảnh check-in mới nhất</h3>
+              </div>
+              <span class="pill">posts / createdAt desc</span>
+            </div>
+            <div id="feed-list" class="list"></div>
+          </section>
+
+          <section class="card section-card">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Leaderboard</p>
+                <h3>Top người dùng</h3>
+              </div>
+              <span class="pill">users / visitedProvinceCount</span>
+            </div>
+            <div id="leaderboard-list" class="list"></div>
+          </section>
+        </section>
+
+        <section class="card section-card">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">My collection</p>
+              <h3>Bộ sưu tập check-in của tôi</h3>
+            </div>
+            <span class="pill">checkins / userId</span>
+          </div>
+          <div id="collection-list" class="collection-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

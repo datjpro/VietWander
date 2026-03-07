@@ -1,16 +1,22 @@
-{
+﻿{
   "name": "vietwander-workspace",
   "private": true,
   "workspaces": [
-    "frontend",
+    "frontend/mobile",
+    "frontend/web",
     "backend"
   ],
   "scripts": {
-    "dev:web": "npm --workspace frontend run web",
-    "build:web": "npm --workspace frontend run export:web",
-    "dev:mobile": "npm --workspace frontend run start",
-    "dev:api": "npm --workspace backend run dev",
+    "dev:web": "npm --workspace @vietwander/web run dev",
+    "build:web": "npm --workspace @vietwander/web run build",
+    "start:web": "npm --workspace @vietwander/web run start",
+    "dev:mobile": "npm --workspace @vietwander/mobile run start",
+    "android": "npm --workspace @vietwander/mobile run android",
+    "ios": "npm --workspace @vietwander/mobile run ios",
+    "dev:mobile:web-preview": "npm --workspace @vietwander/mobile run preview:web",
+    "build:mobile:web-preview": "npm --workspace @vietwander/mobile run export:preview-web",
+    "dev:api": "npm --workspace @vietwander/backend run dev",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "typecheck:frontend": "npm --workspace frontend run typecheck"
+    "typecheck:mobile": "npm --workspace @vietwander/mobile run typecheck"
   }
 }

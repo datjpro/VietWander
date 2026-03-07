@@ -422,3 +422,7 @@ FodyWeavers.xsd
 frontend/.expo/
 frontend/dist/
 backend/dist/
+
+frontend/mobile/.expo/
+frontend/mobile/dist/
+frontend/web/dist/
