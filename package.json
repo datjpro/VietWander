@@ -7,10 +7,10 @@
   ],
   "scripts": {
     "dev:web": "npm --workspace frontend run web",
+    "build:web": "npm --workspace frontend run export:web",
     "dev:mobile": "npm --workspace frontend run start",
     "dev:api": "npm --workspace backend run dev",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "typecheck:frontend": "npm --workspace frontend run typecheck",
-    "typecheck:backend": "npm --workspace backend run typecheck"
+    "typecheck:frontend": "npm --workspace frontend run typecheck"
   }
 }
