@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { ActivityIndicator, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LandmarkCard } from '../../src/components/LandmarkCard';
-import { collectionItems, designAssets, provinces } from '../../src/data/mock';
+import { provinces } from '../../src/data/mock';
+import { useUserCollection, useUserProfile } from '../../src/features/community';
 import { useAuth } from '../../src/providers/AuthProvider';
 import { colors } from '../../src/theme/tokens';
 
@@ -10,6 +11,8 @@ const province = provinces[0];
 
 export default function ProfileScreen() {
   const { user, signOutUser } = useAuth();
+  const { data: profile } = useUserProfile(user?.uid);
+  const { data: collectionItems } = useUserCollection(user?.uid);
   const [signingOut, setSigningOut] = useState(false);
 
   const handleSignOut = async () => {
@@ -21,15 +24,15 @@ export default function ProfileScreen() {
     }
   };
 
-  const displayName = user?.displayName?.trim() || 'Du khách mới';
-  const handle = user?.email ? `@${user.email.split('@')[0]}` : '@vietwander';
+  const displayName = profile?.displayName || user?.displayName?.trim() || 'Du khách mới';
+  const handle = profile?.email ? `@${profile.email.split('@')[0]}` : '@vietwander';
 
   return (
     <SafeAreaView style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.headerCard}>
-          {user?.photoURL ? (
-            <Image source={{ uri: user.photoURL }} style={styles.avatar} />
+          {profile?.photoURL || user?.photoURL ? (
+            <Image source={{ uri: profile?.photoURL || user?.photoURL || undefined }} style={styles.avatar} />
           ) : (
             <View style={[styles.avatar, styles.avatarFallback]}>
               <Text style={styles.avatarFallbackLabel}>{displayName.charAt(0).toUpperCase()}</Text>
@@ -39,7 +42,7 @@ export default function ProfileScreen() {
           <Text style={styles.handle}>{handle}</Text>
           <View style={styles.levelBadge}>
             <Ionicons color={colors.primaryDark} name="flash" size={16} />
-            <Text style={styles.levelBadgeLabel}>Du khách</Text>
+            <Text style={styles.levelBadgeLabel}>{profile?.levelTitle || 'Du khách'}</Text>
           </View>
           <Pressable disabled={signingOut} onPress={handleSignOut} style={[styles.signOutButton, signingOut && styles.signOutButtonDisabled]}>
             {signingOut ? <ActivityIndicator color={colors.primaryDark} size="small" /> : <Text style={styles.signOutLabel}>Đăng xuất</Text>}
@@ -48,15 +51,15 @@ export default function ProfileScreen() {
 
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
-            <Text style={styles.statValue}>12</Text>
+            <Text style={styles.statValue}>{profile?.visitedProvinceCount ?? collectionItems.length}</Text>
             <Text style={styles.statLabel}>Tỉnh</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statValue}>34</Text>
+            <Text style={styles.statValue}>{profile?.verifiedCheckinCount ?? 0}</Text>
             <Text style={styles.statLabel}>Check-in</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statValue}>5</Text>
+            <Text style={styles.statValue}>{collectionItems.length}</Text>
             <Text style={styles.statLabel}>Badge</Text>
           </View>
         </View>
@@ -65,9 +68,9 @@ export default function ProfileScreen() {
         <LandmarkCard landmark={province.landmarks[0]} />
 
         <Text style={styles.sectionTitle}>Tỉnh đã mở khóa</Text>
-        {collectionItems.slice(0, 2).map((item) => (
+        {collectionItems.slice(0, 3).map((item) => (
           <View key={item.id} style={styles.unlockedRow}>
-            <Image source={{ uri: item.imageUrl || designAssets.avatar }} style={styles.rowThumb} />
+            {item.imageUrl ? <Image source={{ uri: item.imageUrl }} style={styles.rowThumb} /> : <View style={[styles.rowThumb, styles.thumbPlaceholder]} />}
             <View style={styles.rowTextWrap}>
               <Text style={styles.rowTitle}>{item.name}</Text>
               <Text style={styles.rowSubtitle}>Check-in gần nhất: {item.dateLabel}</Text>
@@ -194,6 +197,9 @@ const styles = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 16,
+  },
+  thumbPlaceholder: {
+    backgroundColor: '#dbe4df',
   },
   rowTextWrap: {
     flex: 1,

@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+﻿import { Ionicons } from '@expo/vector-icons';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/tokens';
 
@@ -18,7 +18,7 @@ export function CollectionProvinceRow({ name, dateLabel, imageUrl, locked = fals
         </View>
         <View style={styles.textWrap}>
           <Text style={styles.lockedTitle}>Chưa khám phá</Text>
-          <Text style={styles.lockedSubtitle}>Điểm đến tiếp theo của bạn là đâu?</Text>
+          <Text style={styles.lockedSubtitle}>Điểm đến tiếp theo của bạn sẽ là đâu?</Text>
         </View>
       </View>
     );

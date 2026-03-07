@@ -1,14 +1,42 @@
-import { Ionicons } from '@expo/vector-icons';
+﻿import { Ionicons } from '@expo/vector-icons';
 import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useMemo } from 'react';
 import { useRouter } from 'expo-router';
-import { designAssets, leaderboardEntries, leaderboardPodium } from '../../src/data/mock';
+import { designAssets } from '../../src/data/mock';
+import { fallbackLeaderboardData, useLeaderboard, useUserProfile } from '../../src/features/community';
+import { useAuth } from '../../src/providers/AuthProvider';
 import { colors } from '../../src/theme/tokens';
 
 export default function LeaderboardScreen() {
   const router = useRouter();
-  const [second, first, third] = leaderboardPodium;
-  const currentUser = leaderboardEntries[leaderboardEntries.length - 1];
-  const rankedEntries = leaderboardEntries.slice(0, leaderboardEntries.length - 1);
+  const { user } = useAuth();
+  const { data: currentUserProfile } = useUserProfile(user?.uid);
+  const { data: realtimeEntries, error } = useLeaderboard(user?.uid);
+
+  const allEntries = useMemo(() => {
+    if (realtimeEntries.length >= 3) {
+      return realtimeEntries;
+    }
+
+    return fallbackLeaderboardData;
+  }, [realtimeEntries]);
+
+  const first = allEntries.find((item) => Number(item.rank) === 1) || fallbackLeaderboardData.find((item) => Number(item.rank) === 1)!;
+  const second = allEntries.find((item) => Number(item.rank) === 2) || fallbackLeaderboardData.find((item) => Number(item.rank) === 2)!;
+  const third = allEntries.find((item) => Number(item.rank) === 3) || fallbackLeaderboardData.find((item) => Number(item.rank) === 3)!;
+  const rankedEntries = allEntries.filter((item) => Number(item.rank) > 3);
+  const currentUserEntry =
+    allEntries.find((item) => item.id === user?.uid) ||
+    (currentUserProfile
+      ? {
+          id: currentUserProfile.uid,
+          rank: '--',
+          name: currentUserProfile.displayName,
+          title: currentUserProfile.levelTitle,
+          provinceCountLabel: `${currentUserProfile.visitedProvinceCount}/63`,
+          avatarUrl: currentUserProfile.photoURL || designAssets.currentUserRank,
+        }
+      : fallbackLeaderboardData[fallbackLeaderboardData.length - 1]);
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -22,6 +50,8 @@ export default function LeaderboardScreen() {
             <Ionicons color={colors.text} name="share-social" size={20} />
           </Pressable>
         </View>
+
+        {error ? <Text style={styles.infoBanner}>{error}</Text> : null}
 
         <View style={styles.heroArea}>
           <Image source={{ uri: designAssets.leaderboardMapOutline }} style={styles.mapOutline} resizeMode="contain" />
@@ -59,7 +89,7 @@ export default function LeaderboardScreen() {
 
         <View style={styles.segmentWrap}>
           <View style={styles.segmentActive}>
-            <Text style={styles.segmentActiveLabel}>Tuần này</Text>
+            <Text style={styles.segmentActiveLabel}>Realtime</Text>
           </View>
           <View style={styles.segmentInactive}>
             <Text style={styles.segmentInactiveLabel}>Tất cả</Text>
@@ -87,14 +117,14 @@ export default function LeaderboardScreen() {
 
       <View style={styles.currentUserBar}>
         <View style={styles.currentRankPill}>
-          <Text style={styles.currentRankText}>{currentUser.rank}</Text>
+          <Text style={styles.currentRankText}>{currentUserEntry.rank}</Text>
         </View>
-        <Image source={{ uri: currentUser.avatarUrl }} style={styles.currentUserAvatar} />
+        <Image source={{ uri: currentUserEntry.avatarUrl }} style={styles.currentUserAvatar} />
         <View style={styles.currentUserText}>
-          <Text style={styles.currentUserName}>{currentUser.name}</Text>
-          <Text style={styles.currentUserHint}>{currentUser.title}</Text>
+          <Text style={styles.currentUserName}>{currentUserEntry.name}</Text>
+          <Text style={styles.currentUserHint}>{currentUserEntry.title}</Text>
         </View>
-        <Text style={styles.currentUserCount}>{currentUser.provinceCountLabel}</Text>
+        <Text style={styles.currentUserCount}>{currentUserEntry.provinceCountLabel}</Text>
       </View>
     </SafeAreaView>
   );
@@ -107,6 +137,16 @@ const styles = StyleSheet.create({
   circleButton: { width: 46, height: 46, borderRadius: 23, backgroundColor: '#f1f5f9', alignItems: 'center', justifyContent: 'center' },
   shareButton: { backgroundColor: '#34e67a' },
   headerTitle: { fontSize: 24, fontWeight: '900', color: colors.text },
+  infoBanner: {
+    marginBottom: 12,
+    borderRadius: 16,
+    backgroundColor: '#eff6ff',
+    color: '#1d4ed8',
+    fontSize: 13,
+    fontWeight: '700',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
   heroArea: { height: 290, backgroundColor: '#e4f5ea', borderRadius: 30, marginBottom: 20, justifyContent: 'flex-end', paddingBottom: 12 },
   mapOutline: { position: 'absolute', alignSelf: 'center', top: 24, width: 170, height: 120, opacity: 0.24 },
   podiumCard: { position: 'absolute', width: 104, borderTopLeftRadius: 28, borderTopRightRadius: 28, backgroundColor: 'white', alignItems: 'center', paddingTop: 14, borderWidth: 2 },

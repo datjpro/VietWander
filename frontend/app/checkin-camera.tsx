@@ -1,11 +1,36 @@
-import { Ionicons } from '@expo/vector-icons';
+﻿import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { ImageBackground, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, ImageBackground, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { designAssets } from '../src/data/mock';
+import { createDemoCheckin } from '../src/features/community';
+import { useAuth } from '../src/providers/AuthProvider';
 import { colors } from '../src/theme/tokens';
 
 export default function CheckinCameraScreen() {
   const router = useRouter();
+  const { user } = useAuth();
+  const [saving, setSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleCompleteCheckin = async () => {
+    if (!user) {
+      router.replace('/login');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setErrorMessage(null);
+      await createDemoCheckin(user);
+      router.replace('/leaderboard');
+    } catch (error) {
+      console.warn('Unable to save demo check-in', error);
+      setErrorMessage('Không thể lưu check-in lên Firebase. Hãy kiểm tra Firestore rules rồi thử lại.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <ImageBackground imageStyle={styles.backgroundImage} source={{ uri: designAssets.cameraBackdrop }} style={styles.screen}>
@@ -29,21 +54,23 @@ export default function CheckinCameraScreen() {
               <Ionicons color={colors.primaryDark} name="ribbon" size={28} />
             </View>
             <Text style={styles.modalTitle}>CHECK-IN THÀNH CÔNG!</Text>
-            <Text style={styles.modalSubtitle}>Bạn đã nhận được huy hiệu 'Nhà Thám Hiểm Đà Thành'</Text>
+            <Text style={styles.modalSubtitle}>Bạn vừa mở khóa huy hiệu Đà Nẵng. Ảnh check-in sẽ được lưu vào hồ sơ và feed cộng đồng.</Text>
 
             <View style={styles.rewardRow}>
               <View style={[styles.rewardPill, styles.rewardGreen]}>
-                <Text style={styles.rewardValue}>+50</Text>
-                <Text style={styles.rewardLabel}>ĐIỂM SEN</Text>
+                <Text style={styles.rewardValue}>+1</Text>
+                <Text style={styles.rewardLabel}>TỈNH MỞ KHÓA</Text>
               </View>
               <View style={[styles.rewardPill, styles.rewardOrange]}>
-                <Text style={[styles.rewardValue, styles.rewardOrangeValue]}>#12</Text>
-                <Text style={styles.rewardLabel}>XẾP HẠNG</Text>
+                <Text style={[styles.rewardValue, styles.rewardOrangeValue]}>LIVE</Text>
+                <Text style={styles.rewardLabel}>ĐỒNG BỘ FEED</Text>
               </View>
             </View>
 
-            <Pressable onPress={() => router.push('/leaderboard')} style={styles.confirmButton}>
-              <Text style={styles.confirmLabel}>TUYỆT VỜI!</Text>
+            {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
+            <Pressable disabled={saving} onPress={handleCompleteCheckin} style={[styles.confirmButton, saving && styles.confirmButtonDisabled]}>
+              {saving ? <ActivityIndicator color="#03140c" size="small" /> : <Text style={styles.confirmLabel}>LƯU VÀ XEM BXH</Text>}
             </Pressable>
           </View>
         </View>
@@ -78,9 +105,20 @@ const styles = StyleSheet.create({
   rewardGreen: { borderColor: colors.primary },
   rewardOrange: { borderColor: '#fb923c' },
   rewardValue: { fontSize: 28, fontWeight: '900', color: colors.primaryDark },
-  rewardOrangeValue: { color: '#fb923c' },
+  rewardOrangeValue: { color: '#fb923c', fontSize: 22 },
   rewardLabel: { marginTop: 4, fontSize: 12, fontWeight: '800', color: '#94a3b8' },
+  errorText: {
+    marginTop: 16,
+    borderRadius: 16,
+    backgroundColor: '#fee2e2',
+    color: '#b91c1c',
+    fontSize: 13,
+    fontWeight: '700',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
   confirmButton: { marginTop: 22, height: 58, borderRadius: 29, backgroundColor: '#34e67a', borderWidth: 4, borderColor: '#0f1b15', alignItems: 'center', justifyContent: 'center' },
+  confirmButtonDisabled: { opacity: 0.8 },
   confirmLabel: { color: '#03140c', fontSize: 18, fontWeight: '900' },
   bottomBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 42, paddingBottom: 24 },
   cameraButton: { width: 76, height: 76, borderRadius: 38, backgroundColor: '#ff9b4a', borderWidth: 6, borderColor: 'rgba(255,255,255,0.24)', alignItems: 'center', justifyContent: 'center' },

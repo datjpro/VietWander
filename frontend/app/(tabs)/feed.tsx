@@ -1,20 +1,20 @@
-import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+﻿import { Ionicons } from '@expo/vector-icons';
+import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AppIconButton } from '../../src/components/AppIconButton';
 import { FeedPostCard } from '../../src/components/FeedPostCard';
-import { feedPosts } from '../../src/data/mock';
+import { useProvinceFeed } from '../../src/features/community';
 import { colors } from '../../src/theme/tokens';
 
-const hashtags = ['#PhuQuocCheckin', '#SunsetBeach', '#StarfishBeach'];
-
 export default function FeedScreen() {
+  const { data: posts, hashtags, loading, error } = useProvinceFeed();
+
   return (
     <SafeAreaView style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <View style={styles.brandWrap}>
             <View style={styles.logoCircle}>
-              <Ionicons color="white" name="pause" size={16} />
+              <Ionicons color="white" name="compass" size={16} />
             </View>
             <Text style={styles.brand}>VietWander</Text>
           </View>
@@ -24,6 +24,16 @@ export default function FeedScreen() {
           </View>
         </View>
 
+        <View style={styles.titleRow}>
+          <View>
+            <Text style={styles.title}>Feed địa danh</Text>
+            <Text style={styles.subtitle}>Ảnh và khoảnh khắc check-in mới nhất từ cộng đồng.</Text>
+          </View>
+          {loading ? <ActivityIndicator color={colors.primaryDark} size="small" /> : null}
+        </View>
+
+        {error ? <Text style={styles.infoBanner}>{error}</Text> : null}
+
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsRow}>
           {hashtags.map((hashtag, index) => (
             <View key={hashtag} style={[styles.chip, index === 0 && styles.chipActive]}>
@@ -32,7 +42,7 @@ export default function FeedScreen() {
           ))}
         </ScrollView>
 
-        {feedPosts.map((post) => (
+        {posts.map((post) => (
           <FeedPostCard key={post.id} post={post} />
         ))}
       </ScrollView>
@@ -77,6 +87,34 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: 'row',
     gap: 8,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  subtitle: {
+    marginTop: 6,
+    maxWidth: 250,
+    fontSize: 13,
+    lineHeight: 20,
+    color: colors.textMuted,
+  },
+  infoBanner: {
+    marginBottom: 12,
+    borderRadius: 16,
+    backgroundColor: '#eff6ff',
+    color: '#1d4ed8',
+    fontSize: 13,
+    fontWeight: '700',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   chipsRow: {
     marginBottom: 14,

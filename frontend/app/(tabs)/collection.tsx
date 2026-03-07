@@ -1,13 +1,21 @@
-import { Ionicons } from '@expo/vector-icons';
+﻿import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AppIconButton } from '../../src/components/AppIconButton';
 import { CollectionProvinceRow } from '../../src/components/CollectionProvinceRow';
 import { SectionHeader } from '../../src/components/SectionHeader';
-import { collectionItems } from '../../src/data/mock';
+import { useUserCollection, useUserProfile } from '../../src/features/community';
+import { useAuth } from '../../src/providers/AuthProvider';
 import { colors } from '../../src/theme/tokens';
 
 export default function CollectionScreen() {
+  const { user } = useAuth();
+  const { data: profile } = useUserProfile(user?.uid);
+  const { data: collectionItems, error } = useUserCollection(user?.uid);
+
+  const visitedProvinceCount = profile?.visitedProvinceCount ?? collectionItems.length;
+  const progressRatio = Math.min(visitedProvinceCount / 63, 1);
+
   return (
     <SafeAreaView style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -36,10 +44,10 @@ export default function CollectionScreen() {
             </View>
           </View>
           <View style={styles.counterPill}>
-            <Text style={styles.counterText}>12/63 Tỉnh</Text>
+            <Text style={styles.counterText}>{visitedProvinceCount}/63 tỉnh</Text>
           </View>
-          <Text style={styles.heroTitle}>Bạn đã khám phá 12/63 tỉnh!</Text>
-          <Text style={styles.heroSubtitle}>Hành trình xuyên Việt của bạn đang rất tuyệt vời.</Text>
+          <Text style={styles.heroTitle}>Bạn đã mở khóa {visitedProvinceCount} tỉnh trên bản đồ cá nhân.</Text>
+          <Text style={styles.heroSubtitle}>Mỗi check-in mới sẽ thêm huy hiệu tỉnh vào bộ sưu tập hành trình của bạn.</Text>
         </View>
 
         <View style={styles.levelCard}>
@@ -47,24 +55,22 @@ export default function CollectionScreen() {
             <Ionicons color={colors.primaryDark} name="medal" size={22} />
           </View>
           <View style={styles.levelTextWrap}>
-            <Text style={styles.levelTitle}>Nhà thám hiểm cấp 2</Text>
-            <Text style={styles.levelSubtitle}>150 điểm đến cấp tiếp theo</Text>
+            <Text style={styles.levelTitle}>{profile?.levelTitle || 'Du khách'}</Text>
+            <Text style={styles.levelSubtitle}>{profile?.verifiedCheckinCount ?? 0} check-in đã xác thực</Text>
             <View style={styles.progressTrack}>
-              <View style={styles.progressFill} />
+              <View style={[styles.progressFill, { width: `${Math.max(progressRatio * 100, 6)}%` }]} />
             </View>
           </View>
         </View>
 
+        {error ? <Text style={styles.infoBanner}>{error}</Text> : null}
+
         <SectionHeader actionLabel="Xem tất cả" title="Bộ sưu tập tỉnh thành" />
 
         {collectionItems.map((item) => (
-          <CollectionProvinceRow
-            dateLabel={item.dateLabel}
-            imageUrl={item.imageUrl}
-            key={item.id}
-            name={item.name}
-          />
+          <CollectionProvinceRow dateLabel={item.dateLabel} imageUrl={item.imageUrl} key={item.id} name={item.name} />
         ))}
+
         <CollectionProvinceRow dateLabel="" locked name="Chưa khám phá" />
       </ScrollView>
     </SafeAreaView>
@@ -223,9 +229,18 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   progressFill: {
-    width: '62%',
     height: '100%',
     borderRadius: 999,
     backgroundColor: colors.primaryDark,
+  },
+  infoBanner: {
+    marginBottom: 14,
+    borderRadius: 16,
+    backgroundColor: '#eff6ff',
+    color: '#1d4ed8',
+    fontSize: 13,
+    fontWeight: '700',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
 });
