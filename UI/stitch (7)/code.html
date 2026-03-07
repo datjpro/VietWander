@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee7c",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102218",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2">
+<div class="p-2 bg-primary/20 rounded-full text-primary">
+<span class="material-symbols-outlined font-bold">account_circle</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight">CheckViet</h1>
+</div>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light dark:border-background-dark"></span>
+</button>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto pb-24">
+<!-- Progress Summary Card -->
+<section class="p-4">
+<div class="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex flex-col items-center text-center">
+<div class="relative mb-6">
+<!-- Vietnam Map Illustration Mockup -->
+<div class="w-64 h-80 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden relative border border-primary/10">
+<div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
+<img class="w-full h-full object-contain p-4" data-alt="Stylized illustrated colorful map of Vietnam with pins" data-location="Vietnam" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3dZUhPlr9QzUk9ZoQbgUtqwFaBFS4iUNFLoh7h1ALtAtCuD4uLD_xc4puXQeI05B3WbNmyMjD9DBGJLLQ3paFlMkaSQ4qibvC44je1mXeU8jNOrygWehVh8MC0c5YEhgP-Z2YIhU2NANLwSlHTFXvUOcA6mklz_4a0K8cE0adQ9Zj5DBYBBpCXimivFngZRKSWulRVicMd9QfIxzJhXZGiKKbNOES8ucL6HtoByOFdN8vHypjbKEj1y77vsm_A_0qe5SREcR9lLDZ"/>
+<!-- Floating Pins Overlay Mockup -->
+<div class="absolute top-1/4 left-1/2 -translate-x-1/2 text-primary">
+<span class="material-symbols-outlined text-3xl fill-1">location_on</span>
+</div>
+<div class="absolute bottom-1/4 left-1/3 text-primary">
+<span class="material-symbols-outlined text-2xl fill-1">location_on</span>
+</div>
+</div>
+<div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-primary text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+                            12/63 Tỉnh
+                        </div>
+</div>
+<h2 class="text-2xl font-extrabold mb-1">Bạn đã khám phá 12/63 tỉnh!</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-6">Hành trình xuyên Việt của bạn đang rất tuyệt vời!</p>
+<!-- Level Badge & Progress -->
+<div class="w-full bg-slate-50 dark:bg-slate-800 rounded-xl p-4 flex flex-col items-center gap-3">
+<div class="flex items-center gap-3 w-full">
+<div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-2xl">military_tech</span>
+</div>
+<div class="flex-1 text-left">
+<p class="font-bold text-lg leading-tight">Nhà thám hiểm cấp 2</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">150 điểm để lên cấp tiếp theo</p>
+</div>
+</div>
+<div class="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[65%]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Collections Section -->
+<section class="px-4 pb-4">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold">Bộ sưu tập tỉnh thành</h3>
+<button class="text-primary text-sm font-semibold">Xem tất cả</button>
+</div>
+<!-- List of collected provinces -->
+<div class="space-y-3">
+<!-- Province Item -->
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+<div class="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Beautiful aerial view of Ha Long Bay" data-location="Quang Ninh" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCre8kE4Cl_HgZyS25rRTUpaB4FTC0fidoYEhTlQDuvgJi1jhzX6kzv6FoEBFF2I8D8hqEyesvBDbsgLNhUjo0QOM1qjG6SIKg25y5NRwXYQoZm_1plNLvFf27YOS9t-CW0NGtYmkd3fyr4QrfxfwDro_Tlmm0Q6wvjRnVK4PkO6TKa0DzPTeuCe_nWXcoTxpHIX0qNZkdM4CSspnge8IRNyWzCjzSCDljJ5DuoPdKKUhCpetakrcOKeZILgfrkEtw2pBaPWTgbKeaK"/>
+</div>
+<div class="flex-1">
+<h4 class="font-bold">Quảng Ninh</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                            15/03/2024
+                        </p>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">verified</span>
+</div>
+</div>
+<!-- Province Item -->
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+<div class="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Lush green mountains and rice terraces in Sapa" data-location="Lao Cai" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo3eqYcNKQK6bVLSmneQk8XDQ6cS5ENYuQ38KU1HLZzTaXpqvmh6bY1edS42RTDaNUjt_erMMxz-w2S0bP4n4NvtUOVT0XZc1jC6TRob4V-pWigHVDRiy90wcjudqr9TqNaAe-zxKSsMtumUtZ7BbfyNrj2s2v9oCdKoRTMT2TQSdAwAt-R3whniy2w7ZDVrY1unslTrmLCw34cQ1AIvZQRmCsBlPK_ywhN5kvjSVwl8l6Ap7C41rkpX-N1IekhHCGyVZ0Bs2KsTF7"/>
+</div>
+<div class="flex-1">
+<h4 class="font-bold">Lào Cai</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                            02/02/2024
+                        </p>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">verified</span>
+</div>
+</div>
+<!-- Province Item -->
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+<div class="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Golden Bridge held by giant hands in Da Nang" data-location="Da Nang" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAN4dl09MbjfTlqCgQD5FO-k0dRQtTAeHhbKcde89S2ow6tdo62br9e7QEK5z-MYHA83VANlekMYtra7kaRxbl24r_x2e8iwj9SggYvCYM4n0K0HFN98JFDesGq2T2OZZA23DbVSsd0rpV03cIJvxKcaVGGRnsiCnRHnw48wFCL4UVtWY3t5OZ67cZY_3sa0nzYA-sIZWD9bz-KY3ptZwqBKd-g8DbjJ25F2V4PkjEE-m0mn-q9EdiVpjFpJi9NBea-1FB-9p64QCm"/>
+</div>
+<div class="flex-1">
+<h4 class="font-bold">Đà Nẵng</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                            20/12/2023
+                        </p>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">verified</span>
+</div>
+</div>
+<!-- Locked Item Placeholder -->
+<div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 opacity-60">
+<div class="w-16 h-16 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400 shrink-0">
+<span class="material-symbols-outlined text-3xl">lock</span>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-slate-400 italic">Chưa khám phá</h4>
+<p class="text-xs text-slate-400">Điểm đến tiếp theo của bạn là đâu?</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-50 rounded-t-xl">
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[10px] font-bold">Khám phá</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="text-[10px] font-bold">Bản đồ</span>
+</a>
+<!-- Active Tab -->
+<a class="flex flex-col items-center gap-1 text-primary relative" href="#">
+<div class="absolute -top-10 bg-primary p-3 rounded-full shadow-lg shadow-primary/40 border-4 border-background-light dark:border-background-dark">
+<span class="material-symbols-outlined text-white text-2xl font-bold">add</span>
+</div>
+<span class="text-[10px] font-bold mt-4">Check-in</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1">bookmarks</span>
+<span class="text-[10px] font-bold">Bộ sưu tập</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Cá nhân</span>
+</a>
+</nav>
+</body></html>
