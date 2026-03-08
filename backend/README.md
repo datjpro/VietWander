@@ -35,8 +35,9 @@ FIREBASE_STORAGE_BUCKET=vietwander-fdf99.firebasestorage.app
 
 Lưu ý:
 - backend **không dùng** `google-services.json`
+- không commit file Service Account JSON hoặc private key vào repo
 - nếu chạy trên **Firebase Functions**, bạn có thể dùng credentials mặc định của môi trường
-- nếu chạy local hoặc VPS riêng, bạn nên dùng **Service Account** hoặc `GOOGLE_APPLICATION_CREDENTIALS`
+- nếu chạy local hoặc VPS riêng, bạn nên dùng **Service Account** hoặc ưu tiên `GOOGLE_APPLICATION_CREDENTIALS` trỏ tới file JSON nằm ngoài repo
 
 ## Chạy local
 

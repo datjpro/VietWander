@@ -7,13 +7,13 @@ import { Platform } from 'react-native';
 import * as reactNativeAuth from '@firebase/auth';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyCevIsxM9c-dU5kswzg6AiXY5sFVzxtAOQ',
-  authDomain: 'vietwander-fdf99.firebaseapp.com',
-  projectId: 'vietwander-fdf99',
-  storageBucket: 'vietwander-fdf99.firebasestorage.app',
-  messagingSenderId: '121533003805',
-  appId: '1:121533003805:web:bafe967b94f4a4fe10eef4',
-  measurementId: 'G-290RLYJ2E4',
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY ?? 'AIzaSyCevIsxM9c-dU5kswzg6AiXY5sFVzxtAOQ',
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? 'vietwander-fdf99.firebaseapp.com',
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? 'vietwander-fdf99',
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ?? 'vietwander-fdf99.firebasestorage.app',
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? '121533003805',
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID ?? '1:121533003805:web:bafe967b94f4a4fe10eef4',
+  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID ?? 'G-290RLYJ2E4',
 };
 
 type ReactNativeAuthModule = typeof reactNativeAuth & {
