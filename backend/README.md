@@ -1,53 +1,42 @@
-﻿# VietWander Backend
+# VietWander Backend
 
-Backend này là lớp API tách riêng khỏi `frontend/web` và `frontend/mobile`, dùng cho:
+Backend này là API Node/Express cho `frontend/web` và `frontend/mobile`.
 
-- dữ liệu tỉnh/thành, địa danh và feed theo tỉnh
-- check-in, leaderboard và bộ sưu tập “Đã đến”
-- seed dữ liệu demo cho Firestore hoặc chạy local bằng memory DB
+## Backend hiện hỗ trợ gì
+
+- chạy local bằng Express server ở `backend/src/server.js`
+- chạy production trên Firebase Functions qua `backend/index.js`
+- dùng Firestore thật khi có Firebase Admin credentials
+- tự dùng credentials mặc định khi chạy trong Firebase Functions
+- tự fallback sang `memory` mode khi thiếu cấu hình
 
 ## Kiến trúc nhanh
 
-- `backend/src/app.js`: khởi tạo Express app và mount API routes
-- `backend/src/services/travel-service.js`: business logic theo schema Firestore
-- `backend/src/repositories/firestore-repository.js`: đọc/ghi Firestore bằng Firebase Admin SDK
-- `backend/src/repositories/memory-repository.js`: fallback local khi chưa có Admin credentials
-- `backend/src/data/seed.js`: demo provinces, users, posts, checkins
+- `backend/src/app.js`: tạo Express app và mount route
+- `backend/index.js`: export Firebase Function `api`
+- `backend/src/repositories/firestore-repository.js`: đọc/ghi Firestore
+- `backend/src/repositories/memory-repository.js`: fallback local
+- `backend/src/services/travel-service.js`: business logic
 
-## Cần gì để chạy với Firestore thật?
+## Env cần cho Firestore thật
 
-Backend **không dùng** `google-services.json` của Android.
+Tạo `backend/.env` từ `backend/.env.example`.
 
-Bạn cần **một trong hai cách** sau cho Firebase Admin:
-
-1. Tạo **Service Account** trong Firebase / Google Cloud và lấy JSON key.
-2. Hoặc set trực tiếp các biến:
-   - `FIREBASE_PROJECT_ID`
-   - `FIREBASE_CLIENT_EMAIL`
-   - `FIREBASE_PRIVATE_KEY`
-
-Nếu chưa có Service Account, backend sẽ tự fallback sang `memory` mode khi thiếu cấu hình hoặc khi bật `USE_MEMORY_DB=true`.
-
-## Cấu hình env
-
-Tạo file `backend/.env` từ `backend/.env.example`.
-
-Ví dụ:
+Ví dụ cho local hoặc server riêng:
 
 ```bash
 PORT=4000
 USE_MEMORY_DB=false
 FIREBASE_PROJECT_ID=vietwander-fdf99
-FIREBASE_CLIENT_EMAIL=...
+FIREBASE_CLIENT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 FIREBASE_STORAGE_BUCKET=vietwander-fdf99.firebasestorage.app
 ```
 
-Nếu bạn dùng file JSON service account, có thể set thêm:
-
-```bash
-GOOGLE_APPLICATION_CREDENTIALS=D:/Demo/VietWander/backend/service-account.json
-```
+Lưu ý:
+- backend **không dùng** `google-services.json`
+- nếu chạy trên **Firebase Functions**, bạn có thể dùng credentials mặc định của môi trường
+- nếu chạy local hoặc VPS riêng, bạn nên dùng **Service Account** hoặc `GOOGLE_APPLICATION_CREDENTIALS`
 
 ## Chạy local
 
@@ -57,28 +46,18 @@ Từ root workspace:
 npm run dev:api
 ```
 
-Hoặc chỉ chạy backend:
-
-```bash
-npm --workspace @vietwander/backend run dev
-```
-
 ## Seed dữ liệu demo
-
-Seed trực tiếp từ backend service:
 
 ```bash
 npm --workspace @vietwander/backend run seed:demo
 ```
 
-Script này sẽ:
-
+Script sẽ:
 - ghi vào Firestore nếu backend đang ở `firestore` mode
-- reset lại dữ liệu demo trong `memory` mode
+- reset dữ liệu demo nếu backend đang ở `memory` mode
 
 ## API hiện có
 
-- `GET /`
 - `GET /health`
 - `GET /api`
 - `POST /api/bootstrap/demo-data`
@@ -97,23 +76,17 @@ Script này sẽ:
 - `GET /api/leaderboard`
 - `GET /api/feed`
 
-## Schema backend đang bám theo
+## Deploy lên Firebase
 
-- `users`
-- `provinces`
-- `checkins`
-- `posts`
-- `provinces/{provinceId}/posts`
+Repo đã cấu hình để Firebase Hosting rewrite:
+- `/api/**` -> function `api`
+- `/health` -> function `api`
 
-Ngoài schema gốc, backend còn mirror thêm vài field để tương thích UI hiện tại:
+Quy trình cơ bản:
 
-- `photoURL`
-- `visitedProvinceCount`
-- `verifiedCheckinCount`
-- `levelTitle`
+```bash
+npm run build:web
+firebase deploy
+```
 
-## Gợi ý bước tiếp theo
-
-- thêm middleware verify Firebase ID token cho các route ghi dữ liệu
-- nối `frontend/web` và `frontend/mobile` sang backend API thay vì gọi dữ liệu rời rạc
-- thêm Cloud Functions / scheduled jobs cho leaderboard tổng hợp
+Chi tiết đầy đủ xem tại `FIREBASE_SETUP.md`.

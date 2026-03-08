@@ -1,7 +1,18 @@
-﻿const DEFAULT_API_BASE_URL = 'http://localhost:4000';
 const runtimeConfig = globalThis.__VIETWANDER_CONFIG__ || {};
 
-export const apiBaseUrl = (runtimeConfig.VITE_API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/$/, '');
+function resolveDefaultApiBaseUrl() {
+  if (runtimeConfig.VITE_API_BASE_URL) {
+    return runtimeConfig.VITE_API_BASE_URL;
+  }
+
+  if (typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+    return 'http://localhost:4000';
+  }
+
+  return '';
+}
+
+export const apiBaseUrl = resolveDefaultApiBaseUrl().replace(/\/$/, '');
 
 async function readJson(response) {
   const contentType = response.headers.get('content-type') || '';
