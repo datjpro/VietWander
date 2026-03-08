@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "vietwander-workspace",
   "private": true,
   "workspaces": [
@@ -18,5 +18,8 @@
     "dev:api": "npm --workspace @vietwander/backend run dev",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "typecheck:mobile": "npm --workspace @vietwander/mobile run typecheck"
+  },
+  "devDependencies": {
+    "firebase-tools": "^15.9.0"
   }
 }
