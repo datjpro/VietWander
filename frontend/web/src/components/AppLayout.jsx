@@ -1,25 +1,31 @@
 ﻿import { NavLink, Outlet } from 'react-router-dom';
-import { useAsyncData } from '../hooks/useAsyncData.js';
-import { getHealth } from '../lib/api.js';
-import { demoHealth } from '../lib/demo-data.js';
 import { useAuth } from '../providers/AuthProvider.jsx';
 
-const navItems = [
-  { to: '/', label: 'Trang chủ', icon: 'home' },
-  { to: '/feed', label: 'Feed', icon: 'photo_library' },
-  { to: '/leaderboard', label: 'BXH', icon: 'military_tech' },
-  { to: '/collection', label: 'Bộ sưu tập', icon: 'bookmarks' },
-  { to: '/checkin', label: 'Check-in', icon: 'photo_camera' }
+const topNavItems = [
+  { to: '/', label: 'Explore' },
+  { to: '/leaderboard', label: 'Leaderboard' },
+  { to: '/collection', label: 'My Collection' }
 ];
 
-function NavigationLinks() {
-  return navItems.map((item) => (
-    <NavLink
-      key={item.to}
-      to={item.to}
-      className={({ isActive }) => `nav-link${isActive ? ' is-active' : ''}`}
-      end={item.to === '/'}
-    >
+const mobileNavItems = [
+  { to: '/', label: 'Explore', icon: 'explore' },
+  { to: '/feed', label: 'Feed', icon: 'photo_library' },
+  { to: '/leaderboard', label: 'Top', icon: 'military_tech' },
+  { to: '/collection', label: 'Saved', icon: 'bookmarks' },
+  { to: '/checkin', label: 'Check-in', icon: 'add_location_alt' }
+];
+
+function TopNavigation() {
+  return topNavItems.map((item) => (
+    <NavLink key={item.to} to={item.to} className={({ isActive }) => `demo-top-link${isActive ? ' is-active' : ''}`} end={item.to === '/'}>
+      {item.label}
+    </NavLink>
+  ));
+}
+
+function MobileNavigation() {
+  return mobileNavItems.map((item) => (
+    <NavLink key={item.to} to={item.to} className={({ isActive }) => `nav-link${isActive ? ' is-active' : ''}`} end={item.to === '/'}>
       <span className="material-symbols-outlined">{item.icon}</span>
       <span>{item.label}</span>
     </NavLink>
@@ -28,147 +34,116 @@ function NavigationLinks() {
 
 export function AppLayout() {
   const { user, profile, logout } = useAuth();
-  const { data: health } = useAsyncData(
-    async () => {
-      try {
-        return await getHealth();
-      } catch {
-        return demoHealth;
-      }
-    },
-    [],
-    demoHealth
-  );
-  const visitedProvinceCount = profile?.visitedProvinceCount || profile?.provincesVisited || 0;
-  const verifiedCheckinCount = profile?.verifiedCheckinCount || 0;
+  const visitedProvinceCount = profile?.visitedProvinceCount || profile?.provincesVisited || 42;
+  const verifiedCheckinCount = profile?.verifiedCheckinCount || 12;
   const provinceGoal = 63;
   const progressPercent = Math.min(100, Math.round((visitedProvinceCount / provinceGoal) * 100));
-  const nextMilestone = [10, 20, 35, 50, 63].find((item) => visitedProvinceCount < item) || 63;
-  const remainingToMilestone = Math.max(0, nextMilestone - visitedProvinceCount);
-  const travelerName = profile?.displayName || user?.displayName || 'Khách ghé thăm';
-  const travelerLevel = profile?.levelTitle || 'Sẵn sàng mở khóa các tỉnh đã đi qua';
+  const travelerName = profile?.displayName || user?.displayName || 'Alex Nguyen';
+  const travelerLevel = profile?.levelTitle || 'Lvl 24 Legend';
+  const travelerAvatar = profile?.avatarUrl || user?.photoURL || '';
   const avatarLetter = travelerName.slice(0, 1).toUpperCase();
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="brand-block">
-          <div className="brand-mark">V</div>
-          <div>
-            <p className="brand-script">VietWander</p>
-            <h1 className="brand-title">Lang thang Việt Nam</h1>
+    <div className="app-shell demo-layout">
+      <header className="topbar demo-topbar">
+        <div className="demo-brand-block">
+          <div className="brand-mark demo-brand-mark">
+            <span className="material-symbols-outlined">map</span>
           </div>
+          <h1 className="demo-brand-title">CheckViet</h1>
         </div>
-        <nav className="topbar-nav" aria-label="Điều hướng chính">
-          <NavigationLinks />
+
+        <nav className="demo-topnav" aria-label="Primary">
+          <TopNavigation />
         </nav>
-        <div className="topbar-actions">
-          <span className="status-chip">DB: {health?.databaseMode || 'unknown'}</span>
-          {user ? (
-            <div className="topbar-profile">
-              <div className="topbar-profile-copy">
-                <strong>{travelerName}</strong>
-                <span>{travelerLevel}</span>
-              </div>
-              <div className="avatar-bubble compact-avatar">{avatarLetter}</div>
-              <button className="button ghost-button compact-button" onClick={logout} type="button">
-                Đăng xuất
-              </button>
+
+        <div className="demo-topbar-actions">
+          <button className="demo-icon-button" type="button" aria-label="Notifications">
+            <span className="material-symbols-outlined">notifications</span>
+            <span className="demo-icon-dot" />
+          </button>
+
+          <div className="demo-user-block">
+            <div className="demo-user-copy">
+              <strong>{travelerName}</strong>
+              <span>{travelerLevel}</span>
             </div>
-          ) : (
-            <div className="auth-cta-row">
-              <NavLink className="button ghost-button" to="/login">
-                Đăng nhập
-              </NavLink>
-              <NavLink className="button primary-button" to="/register">
-                Đăng ký
-              </NavLink>
+            <div className="demo-avatar-frame">
+              {travelerAvatar ? <img alt={travelerName} src={travelerAvatar} /> : <span>{avatarLetter}</span>}
             </div>
-          )}
+          </div>
         </div>
       </header>
 
-      <div className="layout-grid">
-        <aside className="sidebar-card">
-          <div className="sidebar-profile">
-            <div className="avatar-bubble">{avatarLetter}</div>
-            <div>
-              <p className="eyebrow">Traveler profile</p>
-              <h2>{travelerName}</h2>
-              <p className="muted-copy">{travelerLevel}</p>
-            </div>
-          </div>
-
-          <div className="sidebar-stack">
-            <article className="sidebar-insight-card">
-              <div className="sidebar-insight-head">
-                <span className="material-symbols-outlined">explore</span>
-                <span className="eyebrow no-margin">Progress</span>
+      <div className="layout-grid demo-main-grid">
+        <aside className="sidebar-card demo-sidebar">
+          <div className="demo-sidebar-stack">
+            <article className="demo-stat-panel">
+              <div className="demo-panel-head">
+                <span className="demo-panel-icon material-symbols-outlined">explore</span>
+                <span className="demo-panel-kicker">Progress</span>
               </div>
-              <p className="muted-copy">Provinces visited</p>
-              <h3>
+              <p className="demo-panel-label">Provinces Visited</p>
+              <h2>
                 {visitedProvinceCount}
                 <span>/{provinceGoal}</span>
-              </h3>
-              <div className="progress-track" aria-hidden="true">
-                <span className="progress-fill" style={{ width: `${progressPercent}%` }} />
+              </h2>
+              <div className="demo-progress-track" aria-hidden="true">
+                <span className="demo-progress-fill" style={{ width: `${progressPercent}%` }} />
               </div>
             </article>
 
-            <div className="sidebar-stats-grid">
-              <div className="mini-stat-card">
-                <span>Check-in hợp lệ</span>
-                <strong>{verifiedCheckinCount}</strong>
+            <article className="demo-stat-panel">
+              <div className="demo-panel-head">
+                <span className="demo-panel-icon material-symbols-outlined">workspace_premium</span>
+                <span className="demo-panel-kicker">Rewards</span>
               </div>
-              <div className="mini-stat-card">
-                <span>Cấp độ hiện tại</span>
-                <strong>{Math.max(1, Math.round(visitedProvinceCount / 3) || 1)}</strong>
+              <p className="demo-panel-label">Rare Badges</p>
+              <h2>{verifiedCheckinCount}</h2>
+              <div className="demo-badge-row">
+                <span>🏅</span>
+                <span>🌊</span>
+                <span>🌿</span>
+                <span>+8</span>
               </div>
-            </div>
+            </article>
 
-            <article className="sidebar-insight-card quest-card">
-              <div className="sidebar-insight-head">
-                <span className="material-symbols-outlined">award_star</span>
-                <span className="eyebrow no-margin">Active quest</span>
-              </div>
-              <h3>{nextMilestone >= provinceGoal ? 'Vietnam Master' : `Chạm mốc ${nextMilestone} tỉnh`}</h3>
-              <p className="muted-copy">
-                {remainingToMilestone > 0
-                  ? `Đi thêm ${remainingToMilestone} tỉnh nữa để mở khóa cột mốc tiếp theo.`
-                  : 'Bạn đã chạm mốc cuối. Tiếp tục check-in để làm dày bộ sưu tập.'}
-              </p>
-              <NavLink className="button dark-button full-width" to="/checkin">
-                Check-in ngay
+            <article className="demo-quest-panel">
+              <p className="demo-panel-kicker">Active Quest</p>
+              <h3>Mekong Delta Explorer</h3>
+              <p>Visit 3 more floating markets to earn the “River Master” badge.</p>
+              <NavLink className="demo-quest-button" to="/checkin">
+                Continue
               </NavLink>
             </article>
           </div>
 
-          <div className="sidebar-footer">
-            <NavLink className="sidebar-utility" to="/collection">
-              <span className="material-symbols-outlined">bookmarks</span>
-              <span>Bộ sưu tập</span>
-            </NavLink>
+          <div className="demo-sidebar-footer">
+            <button className="demo-side-link" type="button">
+              <span className="material-symbols-outlined">settings</span>
+              <span>Settings</span>
+            </button>
             {user ? (
-              <button className="sidebar-utility danger-utility" onClick={logout} type="button">
+              <button className="demo-side-link danger-link" onClick={logout} type="button">
                 <span className="material-symbols-outlined">logout</span>
-                <span>Đăng xuất</span>
+                <span>Logout</span>
               </button>
             ) : (
-              <NavLink className="sidebar-utility" to="/login">
+              <NavLink className="demo-side-link" to="/login">
                 <span className="material-symbols-outlined">login</span>
-                <span>Đăng nhập</span>
+                <span>Login</span>
               </NavLink>
             )}
           </div>
         </aside>
 
-        <main className="page-stack">
+        <main className="page-stack demo-page-stack">
           <Outlet />
         </main>
       </div>
 
       <nav className="mobile-bottom-nav">
-        <NavigationLinks />
+        <MobileNavigation />
       </nav>
     </div>
   );
