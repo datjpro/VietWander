@@ -1,88 +1,8 @@
-﻿const now = '2026-03-08T00:00:00.000Z';
+﻿import { vietnamProvinces } from '../../../frontend/web/src/lib/vietnam-provinces.js';
 
-export const seedProvinces = [
-  {
-    id: 'ho-chi-minh',
-    name: 'Hồ Chí Minh',
-    fullName: 'Thành phố Hồ Chí Minh',
-    code: 'SG',
-    description: 'Trung tâm kinh tế sôi động với văn hóa đường phố, cà phê và nhịp sống không ngủ.',
-    imageUrl: 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80',
-    landmarks: [
-      {
-        id: 'bitexco',
-        name: 'Bitexco Tower',
-        desc: 'Biểu tượng skyline của thành phố với góc nhìn toàn cảnh đẹp nhất trung tâm.',
-        lat: 10.7717,
-        lng: 106.7041,
-      },
-      {
-        id: 'ben-thanh',
-        name: 'Chợ Bến Thành',
-        desc: 'Điểm check-in biểu tượng cho mọi chuyến lang thang Sài Gòn.',
-        lat: 10.7726,
-        lng: 106.6981,
-      },
-    ],
-    popularTags: ['pho', 'coffee', 'nightlife'],
-    createdAt: now,
-    updatedAt: now,
-  },
-  {
-    id: 'ha-noi',
-    name: 'Hà Nội',
-    fullName: 'Thành phố Hà Nội',
-    code: 'HN',
-    description: 'Thủ đô nghìn năm văn hiến với hồ, phố cổ và ẩm thực đặc sắc bốn mùa.',
-    imageUrl: 'https://images.unsplash.com/photo-1507952006320-7f61cf0e0d8d?auto=format&fit=crop&w=1200&q=80',
-    landmarks: [
-      {
-        id: 'hoan-kiem',
-        name: 'Hồ Hoàn Kiếm',
-        desc: 'Trái tim của Hà Nội, đẹp nhất vào sáng sớm và cuối tuần đi bộ.',
-        lat: 21.0287,
-        lng: 105.852,
-      },
-      {
-        id: 'train-street',
-        name: 'Phố Đường Tàu',
-        desc: 'Trải nghiệm rất riêng của Hà Nội, vừa cổ điển vừa náo nhiệt.',
-        lat: 21.0245,
-        lng: 105.8412,
-      },
-    ],
-    popularTags: ['bun-cha', 'old-quarter', 'lake'],
-    createdAt: now,
-    updatedAt: now,
-  },
-  {
-    id: 'da-nang',
-    name: 'Đà Nẵng',
-    fullName: 'Thành phố Đà Nẵng',
-    code: 'DN',
-    description: 'Thành phố biển trẻ trung với cầu Rồng, Mỹ Khê và các tuyến roadtrip tuyệt đẹp.',
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
-    landmarks: [
-      {
-        id: 'dragon-bridge',
-        name: 'Cầu Rồng',
-        desc: 'Biểu tượng check-in nổi tiếng nhất Đà Nẵng, đặc biệt đẹp về đêm.',
-        lat: 16.0613,
-        lng: 108.227,
-      },
-      {
-        id: 'my-khe',
-        name: 'Biển Mỹ Khê',
-        desc: 'Bãi biển dễ chill, phù hợp chụp ảnh bình minh và hoàng hôn.',
-        lat: 16.0644,
-        lng: 108.2463,
-      },
-    ],
-    popularTags: ['beach', 'bridge', 'roadtrip'],
-    createdAt: now,
-    updatedAt: now,
-  },
-];
+const now = '2026-03-08T00:00:00.000Z';
+
+export const seedProvinces = vietnamProvinces;
 
 export const seedUsers = [
   {
@@ -97,10 +17,10 @@ export const seedUsers = [
     provincesVisited: 18,
     visitedProvinceCount: 18,
     verifiedCheckinCount: 34,
-    badges: ['HN', 'DN', 'SG'],
+    badges: ['HN', 'DN', 'HCM'],
     createdAt: now,
     lastActive: now,
-    updatedAt: now,
+    updatedAt: now
   },
   {
     id: 'demo-linh',
@@ -114,11 +34,11 @@ export const seedUsers = [
     provincesVisited: 24,
     visitedProvinceCount: 24,
     verifiedCheckinCount: 52,
-    badges: ['HN', 'DN', 'SG'],
+    badges: ['HN', 'DN', 'HCM'],
     createdAt: now,
     lastActive: now,
-    updatedAt: now,
-  },
+    updatedAt: now
+  }
 ];
 
 export const seedPosts = [
@@ -138,7 +58,7 @@ export const seedPosts = [
     isPublic: true,
     likesCount: 12,
     commentsCount: 3,
-    createdAt: now,
+    createdAt: now
   },
   {
     id: 'post-demo-2',
@@ -156,8 +76,8 @@ export const seedPosts = [
     isPublic: true,
     likesCount: 19,
     commentsCount: 5,
-    createdAt: now,
-  },
+    createdAt: now
+  }
 ];
 
 export const seedCheckins = [
@@ -173,6 +93,6 @@ export const seedCheckins = [
     location: { lat: 16.0613, lng: 108.227 },
     createdAt: now,
     likesCount: 12,
-    commentsCount: 3,
-  },
+    commentsCount: 3
+  }
 ];

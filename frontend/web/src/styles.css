@@ -364,60 +364,248 @@ textarea {
 
 .map-card {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 18px;
-  align-items: center;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 22px;
+  align-items: start;
 }
 
+.map-story-panel,
+.map-visual-shell,
 .map-card-copy {
   display: grid;
+  gap: 14px;
+}
+
+.map-card-copy code {
+  font-family: inherit;
+  font-weight: 800;
+  color: var(--primary-dark);
+}
+
+.map-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.map-stat-card {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(43, 238, 124, 0.16);
+  background: linear-gradient(135deg, rgba(43, 238, 124, 0.1), rgba(255, 138, 61, 0.08));
+}
+
+.map-stat-card strong {
+  font-size: 1.5rem;
+}
+
+.map-stat-card span {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.map-legend,
+.map-focus-meta,
+.map-tag-list {
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+}
+
+.map-region-pill,
+.map-chip {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text);
+  transition: 0.2s ease;
+}
+
+.map-region-pill {
+  --region-color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.map-region-pill strong {
+  color: var(--region-color);
+}
+
+.map-region-pill.is-active,
+.map-region-pill:hover {
+  border-color: color-mix(in srgb, var(--region-color) 55%, white);
+  box-shadow: 0 10px 24px rgba(16, 34, 24, 0.08);
+}
+
+.map-focus-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(16, 34, 24, 0.08);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.94));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+.map-focus-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: var(--province-accent, var(--primary));
+}
+
+.map-focus-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.map-focus-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(43, 238, 124, 0.14), rgba(255, 138, 61, 0.18));
+  font-size: 1.6rem;
+}
+
+.map-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(16, 34, 24, 0.06);
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.map-visual-shell {
+  min-width: 0;
+}
+
+.map-visual {
+  position: relative;
+  overflow: hidden;
+  border-radius: 32px;
+  border: 1px solid rgba(16, 34, 24, 0.08);
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0.96), rgba(240, 248, 252, 0.96));
+  padding: 12px;
 }
 
 .vietnam-map {
   width: 100%;
-  min-height: 380px;
+  min-height: 680px;
   overflow: visible;
 }
 
+.map-sea {
+  fill: url(#mapSeaGradient);
+}
+
+.map-cloud {
+  fill: rgba(255, 255, 255, 0.7);
+}
+
 .map-silhouette {
-  fill: rgba(16, 34, 24, 0.06);
-  stroke: url(#mapGradient);
+  fill: url(#mapLandGradient);
+  stroke: rgba(16, 34, 24, 0.08);
   stroke-width: 4;
   stroke-linejoin: round;
 }
 
-.map-river {
+.map-coastline {
   fill: none;
-  stroke: rgba(16, 34, 24, 0.14);
-  stroke-dasharray: 10 8;
+  stroke: rgba(47, 158, 68, 0.35);
+  stroke-dasharray: 10 10;
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.map-itinerary {
+  fill: none;
+  stroke: rgba(255, 138, 61, 0.45);
+  stroke-linecap: round;
+  stroke-linejoin: round;
   stroke-width: 3;
+}
+
+.map-archipelago circle {
+  fill: #82d7ff;
+  stroke: white;
+  stroke-width: 3;
+}
+
+.map-archipelago text {
+  fill: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
 }
 
 .map-node {
   cursor: pointer;
+  outline: none;
 }
 
-.map-node circle:first-of-type {
-  fill: var(--primary);
+.map-node-halo {
+  fill: rgba(255, 255, 255, 0.82);
+  opacity: 0.94;
+  stroke: var(--province-color, var(--primary));
+  stroke-width: 2.5;
+}
+
+.map-node-core {
+  fill: var(--province-color, var(--primary));
   stroke: white;
-  stroke-width: 4;
+  stroke-width: 3;
 }
 
-.map-node text {
+.map-node-label {
   fill: var(--text);
-  font-size: 0.9rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.map-node.is-focused .map-node-core,
+.map-node.is-active .map-node-core {
+  filter: drop-shadow(0 0 10px rgba(255, 138, 61, 0.38));
+}
+
+.map-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-height: 240px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.map-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 18px;
   font-weight: 700;
+  text-align: left;
 }
 
-.map-node.is-active circle:first-of-type {
-  fill: var(--accent);
+.map-chip.is-active,
+.map-chip:hover {
+  border-color: rgba(43, 238, 124, 0.28);
+  background: linear-gradient(135deg, rgba(43, 238, 124, 0.12), rgba(255, 138, 61, 0.08));
 }
-
-.map-node-pulse {
-  fill: rgba(43, 238, 124, 0.12);
-}
-
 .leaderboard-row {
   padding: 16px 18px;
   display: grid;
@@ -710,3 +898,16 @@ textarea {
     min-height: 320px;
   }
 }
+
+
+@media (max-width: 760px) {
+  .map-stat-grid,
+  .map-chip-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vietnam-map {
+    min-height: 540px;
+  }
+}
+

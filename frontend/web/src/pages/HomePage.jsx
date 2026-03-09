@@ -1,4 +1,5 @@
-﻿import { Link } from 'react-router-dom';
+﻿import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { EmptyState } from '../components/EmptyState.jsx';
 import { PostCard } from '../components/PostCard.jsx';
 import { ProvinceMap } from '../components/ProvinceMap.jsx';
@@ -7,6 +8,8 @@ import { useAsyncData } from '../hooks/useAsyncData.js';
 import { getFeed, getHealth, getLeaderboard, getProvinces } from '../lib/api.js';
 import { demoHealth, demoLeaderboard, demoPosts, demoProvinces } from '../lib/demo-data.js';
 import { useAuth } from '../providers/AuthProvider.jsx';
+
+const spotlightProvinceIds = ['ha-noi', 'hai-phong', 'hue', 'da-nang', 'khanh-hoa', 'dak-lak', 'ho-chi-minh', 'can-tho'];
 
 export function HomePage() {
   const { profile } = useAuth();
@@ -35,6 +38,14 @@ export function HomePage() {
     }
   );
 
+  const provinceCount = data.provinces.length || demoProvinces.length;
+  const featuredProvinces = useMemo(() => {
+    const provinceMap = new Map(data.provinces.map((province) => [province.id, province]));
+    const spotlight = spotlightProvinceIds.map((id) => provinceMap.get(id)).filter(Boolean);
+    const remaining = data.provinces.filter((province) => !spotlightProvinceIds.includes(province.id));
+    return [...spotlight, ...remaining].slice(0, 8);
+  }, [data.provinces]);
+
   return (
     <div className="page-section-stack">
       <section className="page-card hero-card">
@@ -42,7 +53,8 @@ export function HomePage() {
           <p className="eyebrow">Cartoon map + social travel</p>
           <h1>Khám phá Việt Nam bằng bản đồ hoạt họa và feed check-in realtime</h1>
           <p className="muted-copy">
-            Web được viết lại bằng React JS chuẩn, giữ đúng tinh thần thiết kế từ thư mục `UI` và sẵn sàng kết nối backend / Firebase thật.
+            Trang chủ mới ưu tiên bản đồ Việt Nam đầy đủ, dựng từ dữ liệu tỉnh/thành và API sẵn có để người dùng đi từ overview
+            tới từng địa phương mượt hơn.
           </p>
           <div className="hero-actions">
             <Link className="button primary-button" to="/checkin">
@@ -56,6 +68,7 @@ export function HomePage() {
 
         <div className="stats-grid">
           <StatCard label="DB mode" value={data.health.databaseMode} hint="backend status" />
+          <StatCard label="Bản đồ hiện hành" value={provinceCount} hint="tỉnh / thành" />
           <StatCard
             label="Tỉnh đã mở khóa"
             value={profile?.visitedProvinceCount || profile?.provincesVisited || 0}
@@ -74,13 +87,13 @@ export function HomePage() {
         <div className="page-card">
           <div className="section-heading-row">
             <div>
-              <p className="eyebrow">Tỉnh nổi bật</p>
-              <h2>Chọn tỉnh để xem chi tiết</h2>
+              <p className="eyebrow">Điểm sáng theo vùng</p>
+              <h2>Các tỉnh nổi bật trên bản đồ</h2>
             </div>
-            <span className="pill">{data.provinces.length} tỉnh demo</span>
+            <span className="pill">{provinceCount} đơn vị hành chính</span>
           </div>
           <div className="province-grid">
-            {data.provinces.map((province) => (
+            {featuredProvinces.map((province) => (
               <Link className="province-card" key={province.id} to={`/province/${province.id}`}>
                 <img alt={province.name} src={province.imageUrl} />
                 <div className="province-card-body">
@@ -116,7 +129,9 @@ export function HomePage() {
                   <h3>{entry.displayName}</h3>
                   <p className="muted-copy">{entry.levelTitle || 'Du khách'}</p>
                 </div>
-                <strong>{entry.visitedProvinceCount || entry.provincesVisited || 0}/63</strong>
+                <strong>
+                  {entry.visitedProvinceCount || entry.provincesVisited || 0}/{provinceCount}
+                </strong>
               </article>
             ))}
           </div>

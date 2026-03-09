@@ -1,6 +1,6 @@
 ﻿import { useAsyncData } from '../hooks/useAsyncData.js';
-import { getLeaderboard } from '../lib/api.js';
-import { demoLeaderboard } from '../lib/demo-data.js';
+import { getLeaderboard, getProvinces } from '../lib/api.js';
+import { demoLeaderboard, demoProvinces } from '../lib/demo-data.js';
 import { formatCompactNumber } from '../lib/utils.js';
 import { useAuth } from '../providers/AuthProvider.jsx';
 
@@ -8,14 +8,18 @@ export function LeaderboardPage() {
   const { user } = useAuth();
   const { data, loading, error, reload } = useAsyncData(
     async () => {
-      try {
-        return await getLeaderboard(20);
-      } catch {
-        return demoLeaderboard;
-      }
+      const [leaderboardResult, provincesResult] = await Promise.allSettled([getLeaderboard(20), getProvinces()]);
+
+      return {
+        entries: leaderboardResult.status === 'fulfilled' ? leaderboardResult.value : demoLeaderboard,
+        provinceCount: provincesResult.status === 'fulfilled' ? provincesResult.value.length : demoProvinces.length
+      };
     },
     [],
-    demoLeaderboard
+    {
+      entries: demoLeaderboard,
+      provinceCount: demoProvinces.length
+    }
   );
 
   return (
@@ -34,7 +38,7 @@ export function LeaderboardPage() {
         {error ? <div className="banner warning-banner">{error}</div> : null}
         {loading ? <div className="banner info-banner">Đang tải bảng xếp hạng...</div> : null}
         <div className="leaderboard-list">
-          {data.map((entry, index) => {
+          {data.entries.map((entry, index) => {
             const isCurrentUser = user?.uid && (entry.uid === user.uid || entry.id === user.uid);
             return (
               <article className={`leaderboard-row${isCurrentUser ? ' highlight-row' : ''}`} key={entry.id || entry.uid}>
@@ -45,7 +49,9 @@ export function LeaderboardPage() {
                     <p className="muted-copy">{entry.levelTitle || 'Du khách'}</p>
                   </div>
                   <div className="leaderboard-metrics">
-                    <span>{entry.visitedProvinceCount || entry.provincesVisited || 0}/63 tỉnh</span>
+                    <span>
+                      {entry.visitedProvinceCount || entry.provincesVisited || 0}/{data.provinceCount} tỉnh
+                    </span>
                     <span>{formatCompactNumber(entry.verifiedCheckinCount || 0)} check-in</span>
                   </div>
                 </div>
