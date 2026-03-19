@@ -2,6 +2,7 @@
 import { bootstrapDemoData, getUser, upsertUser } from '../lib/api.js';
 import { demoGuestProfile, demoGuestUser, getDemoProfile } from '../lib/demo-data.js';
 import { loginWithEmail, logoutCurrentUser, observeAuth, registerWithEmail } from '../lib/firebase.js';
+import { readAppearanceSeed } from '../lib/settings.js';
 import { getLevelTitle } from '../lib/utils.js';
 
 const AuthContext = createContext(null);
@@ -38,18 +39,42 @@ function createGuestUser(profile = demoGuestProfile) {
 
 async function syncProfile(user) {
   const displayName = user.displayName || user.email?.split('@')[0] || 'Du khách mới';
+  let existingProfile = null;
+
+  try {
+    existingProfile = await getUser(user.uid);
+  } catch {
+    existingProfile = null;
+  }
+
+  const visitedProvinceCount = existingProfile?.visitedProvinceCount ?? existingProfile?.provincesVisited ?? 0;
   const payload = {
     displayName,
     email: user.email || null,
     avatarUrl: user.photoURL || null,
-    level: 1,
-    levelTitle: getLevelTitle(0)
+    level: existingProfile?.level ?? 1,
+    levelTitle: existingProfile?.levelTitle ?? getLevelTitle(visitedProvinceCount)
   };
+
+  if (!existingProfile?.preferences) {
+    payload.preferences = readAppearanceSeed();
+  }
 
   try {
     return await upsertUser(user.uid, payload);
   } catch {
-    return payload;
+    return {
+      uid: user.uid,
+      ...payload,
+      photoURL: payload.avatarUrl,
+      username: existingProfile?.username ?? null,
+      bio: existingProfile?.bio ?? '',
+      homeProvinceId: existingProfile?.homeProvinceId ?? null,
+      provincesVisited: visitedProvinceCount,
+      visitedProvinceCount,
+      verifiedCheckinCount: existingProfile?.verifiedCheckinCount ?? 0,
+      preferences: existingProfile?.preferences ?? payload.preferences ?? readAppearanceSeed()
+    };
   }
 }
 
@@ -65,7 +90,10 @@ async function ensureGuestProfile() {
     visitedProvinceCount: demoGuestProfile.visitedProvinceCount,
     verifiedCheckinCount: demoGuestProfile.verifiedCheckinCount,
     badges: demoGuestProfile.badges,
-    username: demoGuestProfile.username
+    username: demoGuestProfile.username,
+    bio: demoGuestProfile.bio,
+    homeProvinceId: demoGuestProfile.homeProvinceId,
+    preferences: demoGuestProfile.preferences
   };
 
   try {
@@ -227,7 +255,7 @@ export function AuthProvider({ children }) {
       exitGuestMode,
       resetDemoData
     }),
-    [ready, user, profile, authMode]
+    [authMode, profile, ready, user]
   );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

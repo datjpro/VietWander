@@ -2,7 +2,15 @@
 import { useNavigate } from 'react-router-dom';
 import { ProvinceMap } from './ProvinceMap.jsx';
 import { buildGoogleMapsSearchUrl, decorateProvinces, getShowcaseProvinces } from '../lib/province-map-data.js';
-import { cartoonGoogleMapStyles, createStickerMarkerIcon, googleMapsEnabled, loadGoogleMapsApi, vietnamGoogleMapBounds } from '../lib/google-maps.js';
+import {
+  cartoonGoogleMapStyles,
+  createStickerMarkerIcon,
+  googleMapsEnabled,
+  loadGoogleMapsApi,
+  vietnamGoogleMapBounds
+} from '../lib/google-maps.js';
+import { useI18n } from '../providers/I18nProvider.jsx';
+import { useSettings } from '../providers/SettingsProvider.jsx';
 
 function getMarkerLabel(province) {
   return province?.code?.slice(0, 2) || province?.name?.slice(0, 1)?.toUpperCase() || '•';
@@ -10,6 +18,8 @@ function getMarkerLabel(province) {
 
 export function HomeHeroMap({ provinces = [], posts = [], activeProvinceId = '', onProvinceSelect }) {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const { settings } = useSettings();
   const mapCanvasRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef(new Map());
@@ -202,8 +212,8 @@ export function HomeHeroMap({ provinces = [], posts = [], activeProvinceId = '',
     return (
       <div className="home-hero-map-fallback">
         <div className="home-map-status-row">
-          <span className="status-chip">SVG fallback</span>
-          <span className="muted-copy">{mapError || 'Thiếu Google Maps API key nên demo vẫn chạy bằng illustrated map.'}</span>
+          <span className="status-chip">{t('home.fallbackBadge')}</span>
+          <span className="muted-copy">{mapError || t('home.fallbackDescription')}</span>
         </div>
         <ProvinceMap activeProvinceId={activeProvinceId} posts={posts} provinces={decoratedProvinces} variant="showcase" />
       </div>
@@ -219,17 +229,17 @@ export function HomeHeroMap({ provinces = [], posts = [], activeProvinceId = '',
           <div className="showcase-map-decor showcase-cloud decor-cloud-b" aria-hidden="true" />
           <div className="showcase-map-decor showcase-wave-ribbon" aria-hidden="true" />
           <div className="showcase-map-decor showcase-doodle-loop" aria-hidden="true" />
-          <div className="showcase-map-mode-pill">Google Maps + cartoon overlay</div>
-          {!mapsReady ? <div className="showcase-map-loading">Đang tải nền bản đồ...</div> : null}
+          <div className="showcase-map-mode-pill">{t('home.mapMode')}</div>
+          {!mapsReady ? <div className="showcase-map-loading">{t('home.mapLoading')}</div> : null}
         </div>
 
         <article className="showcase-floating-card showcase-floating-card--google">
           <div className="showcase-floating-head">
             <div>
               <h3>{activeProvince?.fullName || activeProvince?.name}</h3>
-              <p>{activeProvince?.region || 'Vietnam'}</p>
+              <p>{activeProvince?.region || t('home.liveRegionFallback')}</p>
             </div>
-            <span className="showcase-status-pill">DEMO LIVE</span>
+            <span className="showcase-status-pill">{t('home.regionBadge')}</span>
           </div>
 
           {previewImage ? <img alt={activeProvince?.name} className="showcase-floating-image" src={previewImage} /> : null}
@@ -250,13 +260,13 @@ export function HomeHeroMap({ provinces = [], posts = [], activeProvinceId = '',
               <span>{mediaCount}</span>
             </div>
             <div className="showcase-inline-actions">
-              {mapsUrl ? (
+              {settings.preferences.showLocation && mapsUrl ? (
                 <a className="showcase-link-button" href={mapsUrl} rel="noreferrer" target="_blank">
-                  Open Maps
+                  {t('common.openGoogleMaps')}
                 </a>
               ) : null}
               <button className="showcase-card-button" onClick={() => navigate(`/province/${activeProvince?.id}`)} type="button">
-                View Collection
+                {t('common.viewCollection')}
               </button>
             </div>
           </div>
@@ -264,19 +274,19 @@ export function HomeHeroMap({ provinces = [], posts = [], activeProvinceId = '',
 
         <button className="showcase-checkin-button" onClick={() => navigate('/checkin')} type="button">
           <span className="material-symbols-outlined">add_location_alt</span>
-          <span>CHECK-IN NOW</span>
+          <span>{t('home.checkinNow')}</span>
         </button>
 
         <div className="showcase-zoom-controls">
-          <button className="demo-icon-button soft-button" onClick={() => handleZoom(1)} type="button" aria-label="Zoom in">
+          <button className="demo-icon-button soft-button" onClick={() => handleZoom(1)} type="button" aria-label={t('common.zoomIn')}>
             <span className="material-symbols-outlined">add</span>
           </button>
-          <button className="demo-icon-button soft-button" onClick={() => handleZoom(-1)} type="button" aria-label="Zoom out">
+          <button className="demo-icon-button soft-button" onClick={() => handleZoom(-1)} type="button" aria-label={t('common.zoomOut')}>
             <span className="material-symbols-outlined">remove</span>
           </button>
         </div>
 
-        <div className="showcase-chip-row" role="list" aria-label="Featured provinces">
+        <div className="showcase-chip-row" role="list" aria-label={t('home.featuredProvinces')}>
           {decoratedProvinces.map((province) => (
             <button
               className={`showcase-chip${province.id === activeProvince?.id ? ' is-active' : ''}`}

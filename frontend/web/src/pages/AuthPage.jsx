@@ -1,4 +1,6 @@
 ﻿import { Link, useNavigate } from 'react-router-dom';
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js';
+import { useI18n } from '../providers/I18nProvider.jsx';
 import { useAuth } from '../providers/AuthProvider.jsx';
 
 const authArt = {
@@ -12,11 +14,12 @@ export function AuthPage({ mode }) {
   const isRegister = mode === 'register';
   const navigate = useNavigate();
   const { demoModeEnabled, enterGuestMode, exitGuestMode, isGuest, login, register } = useAuth();
+  const { t } = useI18n();
 
-  const title = isRegister ? 'Tạo tài khoản VietWander' : 'Đăng nhập VietWander';
-  const description = isRegister
-    ? 'Bắt đầu sưu tập các tỉnh đã đến và đồng bộ check-in trên web/mobile.'
-    : 'Đăng nhập để xem bộ sưu tập, bảng xếp hạng và tạo check-in mới.';
+  useDocumentTitle(t(isRegister ? 'seo.register' : 'seo.login'));
+
+  const title = t(isRegister ? 'auth.registerTitle' : 'auth.loginTitle');
+  const description = t(isRegister ? 'auth.registerDescription' : 'auth.loginDescription');
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -35,7 +38,7 @@ export function AuthPage({ mode }) {
       }
       navigate('/');
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : 'Xác thực thất bại.');
+      window.alert(error instanceof Error ? error.message : t('auth.submitError'));
     }
   }
 
@@ -52,28 +55,28 @@ export function AuthPage({ mode }) {
     <div className="auth-shell">
       <section className="auth-visual-panel">
         <div className="auth-visual-copy">
-          <p className="eyebrow">Web-first Demo Experience</p>
+          <p className="eyebrow">{t('auth.demoExperience')}</p>
           <h1>{title}</h1>
           <p>{description}</p>
         </div>
-        <img alt="VietWander illustration" src={authArt[mode]} />
+        <img alt={t('auth.illustrationAlt')} src={authArt[mode]} />
       </section>
 
       <section className="auth-card">
         <div>
           <p className="brand-script">VietWander</p>
-          <h2>{isRegister ? 'Bắt đầu khám phá' : 'Chào mừng quay lại'}</h2>
-          <p className="muted-copy">Bản demo web hỗ trợ cả tài khoản thật lẫn guest mode để pitch nhanh mà không cần chuẩn bị auth trước.</p>
+          <h2>{isRegister ? t('auth.startExploring') : t('auth.welcomeBack')}</h2>
+          <p className="muted-copy">{t('auth.helper')}</p>
         </div>
 
         {demoModeEnabled ? (
           <div className="auth-demo-banner">
             <div>
-              <strong>Demo mode đã sẵn sàng</strong>
-              <p className="muted-copy">Vào thẳng flow guest để thử home map, collection và check-in ngay.</p>
+              <strong>{t('auth.demoReadyTitle')}</strong>
+              <p className="muted-copy">{t('auth.demoReadyDescription')}</p>
             </div>
             <button className="button primary-button" onClick={handleEnterDemo} type="button">
-              Vào demo ngay
+              {t('common.enterDemoNow')}
             </button>
           </div>
         ) : null}
@@ -81,36 +84,37 @@ export function AuthPage({ mode }) {
         <form className="form-stack" onSubmit={handleSubmit}>
           {isRegister ? (
             <label>
-              Tên hiển thị
-              <input className="input-field" name="displayName" placeholder="Tô Phạm Thành Đạt" required />
+              {t('common.displayName')}
+              <input className="input-field" name="displayName" placeholder={t('auth.displayNamePlaceholder')} required />
             </label>
           ) : null}
           <label>
-            Email
-            <input className="input-field" name="email" placeholder="dat@example.com" required type="email" />
+            {t('common.email')}
+            <input className="input-field" name="email" placeholder={t('auth.emailPlaceholder')} required type="email" />
           </label>
           <label>
-            Mật khẩu
-            <input className="input-field" name="password" placeholder="••••••••" required type="password" />
+            {t('common.password')}
+            <input className="input-field" name="password" placeholder={t('auth.passwordPlaceholder')} required type="password" />
           </label>
           <button className="button primary-button full-width" type="submit">
-            {isRegister ? 'Tạo tài khoản' : 'Đăng nhập'}
+            {isRegister ? t('auth.createAccount') : t('common.login')}
           </button>
         </form>
 
         <p className="muted-copy compact-copy">
-          {isRegister ? 'Đã có tài khoản?' : 'Chưa có tài khoản?'}{' '}
+          {isRegister ? t('auth.alreadyHaveAccount') : t('auth.dontHaveAccount')}{' '}
           <Link className="inline-link" to={isRegister ? '/login' : '/register'}>
-            {isRegister ? 'Đăng nhập ngay' : 'Đăng ký ngay'}
+            {isRegister ? t('auth.loginNow') : t('auth.registerNow')}
           </Link>
         </p>
 
         {isGuest ? (
           <button className="button ghost-button full-width" onClick={handleExitDemo} type="button">
-            Thoát guest demo
+            {t('auth.exitGuestDemo')}
           </button>
         ) : null}
       </section>
     </div>
   );
 }
+

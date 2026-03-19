@@ -1,7 +1,9 @@
 ﻿import { useMemo } from 'react';
 import { VIETNAM_MAP_VIEWBOX, buildItineraryPoints, decorateProvinces, projectLocation } from '../lib/province-map-data.js';
+import { useI18n } from '../providers/I18nProvider.jsx';
 
 export function CollectionMiniMap({ provinces = [], visitedProvinceIds = [] }) {
+  const { t } = useI18n();
   const decoratedProvinces = useMemo(() => decorateProvinces(provinces), [provinces]);
   const visitedSet = useMemo(() => new Set(visitedProvinceIds), [visitedProvinceIds]);
   const visitedProvinces = useMemo(
@@ -14,18 +16,18 @@ export function CollectionMiniMap({ provinces = [], visitedProvinceIds = [] }) {
     <section className="collection-map-card">
       <div className="section-heading-row wrap-row">
         <div>
-          <p className="eyebrow">Mini map cá nhân</p>
-          <h2>Dấu chân hành trình của bạn</h2>
-          <p className="muted-copy">Chấm xanh là các tỉnh đã có check-in, chấm mờ là nơi bạn chưa ghé trong bản demo.</p>
+          <p className="eyebrow">{t('collection.mapEyebrow')}</p>
+          <h2>{t('collection.mapTitle')}</h2>
+          <p className="muted-copy">{t('collection.mapDescription')}</p>
         </div>
         <div className="collection-map-legend">
-          <span className="collection-legend-pill is-visited">Visited</span>
-          <span className="collection-legend-pill">Wishlist</span>
+          <span className="collection-legend-pill is-visited">{t('collection.legendVisited')}</span>
+          <span className="collection-legend-pill">{t('collection.legendWishlist')}</span>
         </div>
       </div>
 
       <div className="collection-map-shell">
-        <svg className="collection-mini-map" viewBox={`0 0 ${VIETNAM_MAP_VIEWBOX.width} ${VIETNAM_MAP_VIEWBOX.height}`} role="img" aria-label="Mini map cá nhân">
+        <svg className="collection-mini-map" viewBox={`0 0 ${VIETNAM_MAP_VIEWBOX.width} ${VIETNAM_MAP_VIEWBOX.height}`} role="img" aria-label={t('collection.mapAria')}>
           <defs>
             <linearGradient id="collectionSeaGradient" x1="0" x2="1" y1="0" y2="1">
               <stop offset="0%" stopColor="#eff8ff" />
@@ -61,15 +63,15 @@ export function CollectionMiniMap({ provinces = [], visitedProvinceIds = [] }) {
         <div className="collection-map-stats">
           <article className="collection-map-stat">
             <strong>{visitedProvinces.length}</strong>
-            <span>Tỉnh đã ghé</span>
+            <span>{t('collection.statVisited')}</span>
           </article>
           <article className="collection-map-stat">
             <strong>{Math.max(0, decoratedProvinces.length - visitedProvinces.length)}</strong>
-            <span>Còn đang chờ</span>
+            <span>{t('collection.waitingCount')}</span>
           </article>
           <article className="collection-map-stat">
             <strong>{visitedProvinces.slice(-1)[0]?.name || 'Hà Nội'}</strong>
-            <span>Điểm gần nhất trên mini map</span>
+            <span>{t('collection.latestPoint')}</span>
           </article>
         </div>
       </div>

@@ -1,22 +1,17 @@
 ﻿import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../providers/AuthProvider.jsx';
-
-const topNavItems = [
-  { to: '/', label: 'Explore' },
-  { to: '/leaderboard', label: 'Leaderboard' },
-  { to: '/collection', label: 'My Collection' }
-];
-
-const mobileNavItems = [
-  { to: '/', label: 'Explore', icon: 'explore' },
-  { to: '/feed', label: 'Feed', icon: 'photo_library' },
-  { to: '/leaderboard', label: 'Top', icon: 'military_tech' },
-  { to: '/collection', label: 'Saved', icon: 'bookmarks' },
-  { to: '/checkin', label: 'Check-in', icon: 'add_location_alt' }
-];
+import { useI18n } from '../providers/I18nProvider.jsx';
+import { useSettings } from '../providers/SettingsProvider.jsx';
 
 function TopNavigation() {
+  const { t } = useI18n();
+  const topNavItems = [
+    { to: '/', label: t('nav.explore') },
+    { to: '/leaderboard', label: t('nav.leaderboard') },
+    { to: '/collection', label: t('nav.collection') }
+  ];
+
   return topNavItems.map((item) => (
     <NavLink key={item.to} to={item.to} className={({ isActive }) => `demo-top-link${isActive ? ' is-active' : ''}`} end={item.to === '/'}>
       {item.label}
@@ -25,6 +20,15 @@ function TopNavigation() {
 }
 
 function MobileNavigation() {
+  const { t } = useI18n();
+  const mobileNavItems = [
+    { to: '/', label: t('nav.explore'), icon: 'explore' },
+    { to: '/feed', label: t('nav.feed'), icon: 'photo_library' },
+    { to: '/leaderboard', label: t('nav.top'), icon: 'military_tech' },
+    { to: '/collection', label: t('nav.saved'), icon: 'bookmarks' },
+    { to: '/checkin', label: t('nav.checkin'), icon: 'add_location_alt' }
+  ];
+
   return mobileNavItems.map((item) => (
     <NavLink key={item.to} to={item.to} className={({ isActive }) => `nav-link${isActive ? ' is-active' : ''}`} end={item.to === '/'}>
       <span className="material-symbols-outlined">{item.icon}</span>
@@ -34,15 +38,17 @@ function MobileNavigation() {
 }
 
 export function AppLayout() {
-  const { user, profile, logout, isGuest, demoModeEnabled, resetDemoData } = useAuth();
+  const { user, logout, isGuest, demoModeEnabled, resetDemoData } = useAuth();
+  const { settings } = useSettings();
+  const { t } = useI18n();
   const [resettingDemo, setResettingDemo] = useState(false);
-  const visitedProvinceCount = profile?.visitedProvinceCount || profile?.provincesVisited || 42;
-  const verifiedCheckinCount = profile?.verifiedCheckinCount || 12;
+  const visitedProvinceCount = settings.visitedProvinceCount || settings.provincesVisited || 42;
+  const verifiedCheckinCount = settings.verifiedCheckinCount || 12;
   const provinceGoal = 63;
   const progressPercent = Math.min(100, Math.round((visitedProvinceCount / provinceGoal) * 100));
-  const travelerName = profile?.displayName || user?.displayName || 'Demo Traveler';
-  const travelerLevel = profile?.levelTitle || 'Lvl 24 Legend';
-  const travelerAvatar = profile?.avatarUrl || user?.photoURL || '';
+  const travelerName = settings.displayName || user?.displayName || t('common.travelerFallback');
+  const travelerLevel = settings.levelTitle || t('common.travelerLevelFallback');
+  const travelerAvatar = settings.avatarUrl || user?.photoURL || '';
   const avatarLetter = travelerName.slice(0, 1).toUpperCase();
 
   async function handleResetDemo() {
@@ -64,8 +70,8 @@ export function AppLayout() {
             <span className="material-symbols-outlined">map</span>
           </div>
           <div>
-            <h1 className="demo-brand-title">VietWander</h1>
-            <p className="demo-brand-subtitle">Cartoon travel demo</p>
+            <h1 className="demo-brand-title">{t('app.brand')}</h1>
+            <p className="demo-brand-subtitle">{t('app.subtitle')}</p>
           </div>
         </div>
 
@@ -74,16 +80,15 @@ export function AppLayout() {
         </nav>
 
         <div className="demo-topbar-actions">
-          {isGuest ? <span className="status-chip demo-mode-pill">Demo Mode</span> : null}
+          {isGuest ? <span className="status-chip demo-mode-pill">{t('app.demoMode')}</span> : null}
           {demoModeEnabled ? (
             <button className="button ghost-button compact-button" disabled={resettingDemo} onClick={handleResetDemo} type="button">
-              {resettingDemo ? 'Resetting...' : 'Reset demo'}
+              {resettingDemo ? t('shell.resettingDemo') : t('shell.resetDemo')}
             </button>
           ) : null}
-          <button className="demo-icon-button" type="button" aria-label="Notifications">
-            <span className="material-symbols-outlined">notifications</span>
-            <span className="demo-icon-dot" />
-          </button>
+          <NavLink className="demo-icon-button" to="/settings" aria-label={t('app.settings')}>
+            <span className="material-symbols-outlined">settings</span>
+          </NavLink>
 
           <div className="demo-user-block">
             <div className="demo-user-copy">
@@ -103,9 +108,9 @@ export function AppLayout() {
             <article className="demo-stat-panel">
               <div className="demo-panel-head">
                 <span className="demo-panel-icon material-symbols-outlined">explore</span>
-                <span className="demo-panel-kicker">Progress</span>
+                <span className="demo-panel-kicker">{t('shell.progress')}</span>
               </div>
-              <p className="demo-panel-label">Provinces Visited</p>
+              <p className="demo-panel-label">{t('shell.provincesVisited')}</p>
               <h2>
                 {visitedProvinceCount}
                 <span>/{provinceGoal}</span>
@@ -118,9 +123,9 @@ export function AppLayout() {
             <article className="demo-stat-panel">
               <div className="demo-panel-head">
                 <span className="demo-panel-icon material-symbols-outlined">workspace_premium</span>
-                <span className="demo-panel-kicker">Rewards</span>
+                <span className="demo-panel-kicker">{t('shell.rewards')}</span>
               </div>
-              <p className="demo-panel-label">Rare Badges</p>
+              <p className="demo-panel-label">{t('shell.rareBadges')}</p>
               <h2>{verifiedCheckinCount}</h2>
               <div className="demo-badge-row">
                 <span>🏅</span>
@@ -131,19 +136,19 @@ export function AppLayout() {
             </article>
 
             <article className="demo-quest-panel">
-              <p className="demo-panel-kicker">Active Quest</p>
-              <h3>Mekong Delta Explorer</h3>
-              <p>Visit 3 more floating markets to earn the “River Master” badge.</p>
+              <p className="demo-panel-kicker">{t('shell.activeQuest')}</p>
+              <h3>{t('shell.questTitle')}</h3>
+              <p>{t('shell.questDescription')}</p>
               <NavLink className="demo-quest-button" to="/checkin">
-                Continue
+                {t('common.continue')}
               </NavLink>
             </article>
 
             {isGuest ? (
               <article className="demo-insight-panel">
-                <p className="demo-panel-kicker">Guest Demo</p>
-                <h3>Flow đã mở sẵn</h3>
-                <p>Khách demo có thể mở collection, tạo check-in và reset toàn bộ dữ liệu chỉ với một nút.</p>
+                <p className="demo-panel-kicker">{t('app.guestDemo')}</p>
+                <h3>{t('shell.guestReadyTitle')}</h3>
+                <p>{t('shell.guestReadyDescription')}</p>
               </article>
             ) : null}
           </div>
@@ -152,22 +157,22 @@ export function AppLayout() {
             {demoModeEnabled ? (
               <button className="demo-side-link" disabled={resettingDemo} onClick={handleResetDemo} type="button">
                 <span className="material-symbols-outlined">restart_alt</span>
-                <span>{resettingDemo ? 'Resetting demo...' : 'Reset demo data'}</span>
+                <span>{resettingDemo ? t('shell.resetDemoDataLoading') : t('shell.resetDemoData')}</span>
               </button>
             ) : null}
-            <button className="demo-side-link" type="button">
+            <NavLink className="demo-side-link" to="/settings">
               <span className="material-symbols-outlined">settings</span>
-              <span>Settings</span>
-            </button>
+              <span>{t('app.settings')}</span>
+            </NavLink>
             {user ? (
               <button className="demo-side-link danger-link" onClick={logout} type="button">
                 <span className="material-symbols-outlined">logout</span>
-                <span>{isGuest ? 'Exit demo' : 'Logout'}</span>
+                <span>{isGuest ? t('common.exitDemo') : t('common.logout')}</span>
               </button>
             ) : (
               <NavLink className="demo-side-link" to="/login">
                 <span className="material-symbols-outlined">login</span>
-                <span>Login</span>
+                <span>{t('common.login')}</span>
               </NavLink>
             )}
           </div>

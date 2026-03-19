@@ -10,9 +10,13 @@ import {
   projectLocation,
   vietnamMapRegionOrder
 } from '../lib/province-map-data.js';
+import { useI18n } from '../providers/I18nProvider.jsx';
+import { useSettings } from '../providers/SettingsProvider.jsx';
 
 export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [], variant = 'default' }) {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const { settings } = useSettings();
   const decoratedProvinces = useMemo(() => decorateProvinces(provinces), [provinces]);
   const [selectedProvinceId, setSelectedProvinceId] = useState(activeProvinceId || 'da-nang');
 
@@ -61,7 +65,7 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
       className={`vietnam-map${variant === 'showcase' ? ' showcase-map-svg' : ''}`}
       viewBox={`0 0 ${VIETNAM_MAP_VIEWBOX.width} ${VIETNAM_MAP_VIEWBOX.height}`}
       role="img"
-      aria-label="Bản đồ Việt Nam hoạt họa đầy đủ"
+      aria-label={t('map.ariaAnimatedMap')}
     >
       <defs>
         <linearGradient id="mapSeaGradient" x1="0" x2="1" y1="0" y2="1">
@@ -93,10 +97,10 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
       <g className="map-archipelago">
         <circle cx="410" cy="460" r="8" />
         <circle cx="430" cy="492" r="5" />
-        <text x="394" y="446">Hoàng Sa</text>
+        <text x="394" y="446">{t('map.hoangSa')}</text>
         <circle cx="426" cy="596" r="9" />
         <circle cx="446" cy="624" r="6" />
-        <text x="404" y="580">Trường Sa</text>
+        <text x="404" y="580">{t('map.truongSa')}</text>
       </g>
 
       {decoratedProvinces.map((province, index) => {
@@ -164,9 +168,9 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
             <div className="showcase-floating-head">
               <div>
                 <h3>{focusedProvince?.fullName || focusedProvince?.name}</h3>
-                <p>{focusedProvince?.region || 'Vietnam'}</p>
+                <p>{focusedProvince?.region || t('home.liveRegionFallback')}</p>
               </div>
-              <span className="showcase-status-pill">CHECKED IN</span>
+              <span className="showcase-status-pill">{t('map.checkedIn')}</span>
             </div>
 
             {previewImage ? <img alt={focusedProvince?.name} className="showcase-floating-image" src={previewImage} /> : null}
@@ -177,21 +181,21 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
                 <span>{mediaCount}</span>
               </div>
               <button className="showcase-card-button" onClick={() => navigate(`/province/${focusedProvince?.id}`)} type="button">
-                View Collection
+                {t('common.viewCollection')}
               </button>
             </div>
           </article>
 
           <button className="showcase-checkin-button" onClick={() => navigate('/checkin')} type="button">
             <span className="material-symbols-outlined">add_location_alt</span>
-            <span>CHECK-IN NOW</span>
+            <span>{t('home.checkinNow')}</span>
           </button>
 
           <div className="showcase-zoom-controls">
-            <button className="demo-icon-button soft-button" type="button" aria-label="Zoom in">
+            <button className="demo-icon-button soft-button" type="button" aria-label={t('common.zoomIn')}>
               <span className="material-symbols-outlined">add</span>
             </button>
-            <button className="demo-icon-button soft-button" type="button" aria-label="Zoom out">
+            <button className="demo-icon-button soft-button" type="button" aria-label={t('common.zoomOut')}>
               <span className="material-symbols-outlined">remove</span>
             </button>
           </div>
@@ -204,32 +208,34 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
     <div className="map-card">
       <div className="map-story-panel">
         <div className="map-card-copy">
-          <p className="eyebrow">Cartoon atlas · live province data</p>
-          <h2>Bản đồ Việt Nam hoạt họa đầy đủ theo bộ dữ liệu hiện hành</h2>
-          <p className="muted-copy">
-            Component lấy danh sách từ <code>/api/provinces</code>, tự bù metadata còn thiếu và dựng lại thành bản đồ Việt Nam theo
-            phong cách minh họa với cụm vùng, đường hành trình và điểm nhấn từng tỉnh.
-          </p>
+          <p className="eyebrow">{t('map.atlasEyebrow')}</p>
+          <h2>{t('map.atlasTitle')}</h2>
+          <p className="muted-copy">{t('map.atlasDescription')}</p>
         </div>
 
         <div className="map-stat-grid">
           <article className="map-stat-card">
             <strong>{decoratedProvinces.length}</strong>
-            <span>Tỉnh/thành hiển thị</span>
+            <span>{t('map.provincesShown')}</span>
           </article>
           <article className="map-stat-card">
             <strong>{regionStats.length}</strong>
-            <span>Vùng du lịch</span>
+            <span>{t('map.travelRegions')}</span>
           </article>
           <article className="map-stat-card">
             <strong>{landmarkCount}</strong>
-            <span>Điểm landmark</span>
+            <span>{t('map.landmarks')}</span>
           </article>
         </div>
 
         <div className="map-legend">
           {regionStats.map((region) => (
-            <button className={`map-region-pill${focusedProvince?.region === region.label ? ' is-active' : ''}`} key={region.label} type="button">
+            <button
+              className={`map-region-pill${focusedProvince?.region === region.label ? ' is-active' : ''}`}
+              key={region.label}
+              onClick={() => setSelectedProvinceId(decoratedProvinces.find((province) => province.region === region.label)?.id || focusedProvince?.id)}
+              type="button"
+            >
               {region.label} · {region.count}
             </button>
           ))}
@@ -249,7 +255,7 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
             <p className="muted-copy">{focusedProvince.description}</p>
             <div className="map-focus-meta">
               <span className="pill">{focusedProvince.code}</span>
-              <span className="pill">{focusedProvince.landmarks?.[0]?.name || 'Đang cập nhật landmark'}</span>
+              <span className="pill">{focusedProvince.landmarks?.[0]?.name || t('map.updatingLandmark')}</span>
             </div>
             <div className="map-tag-list">
               {(focusedProvince.popularTags || []).slice(0, 3).map((tag) => (
@@ -260,11 +266,11 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
             </div>
             <div className="hero-actions wrap-row">
               <button className="button primary-button" onClick={() => navigate(`/province/${focusedProvince.id}`)} type="button">
-                Xem chi tiết tỉnh
+                {t('map.viewProvinceDetails')}
               </button>
-              {mapsUrl ? (
+              {settings.preferences.showLocation && mapsUrl ? (
                 <a className="button ghost-button" href={mapsUrl} rel="noreferrer" target="_blank">
-                  Mở trên Google Maps
+                  {t('common.openGoogleMaps')}
                 </a>
               ) : null}
             </div>

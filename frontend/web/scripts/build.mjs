@@ -2,6 +2,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { transformAsync } from '@babel/core';
+import { defaultPreferences, SETTINGS_CACHE_KEY } from '../src/lib/settings-constants.js';
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.resolve(currentDir, '..');
@@ -72,6 +73,32 @@ async function getAllFiles(directoryPath) {
   return files.flat();
 }
 
+function createThemeBootstrapScript() {
+  return `(() => {
+    const storageKey = ${JSON.stringify(SETTINGS_CACHE_KEY)};
+    const defaults = ${JSON.stringify(defaultPreferences)};
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      const payload = raw ? JSON.parse(raw) : null;
+      const preferences = payload?.settings?.preferences || payload?.preferences || defaults;
+      const theme = preferences.theme === 'dark'
+        ? 'dark'
+        : preferences.theme === 'light'
+          ? 'light'
+          : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      const language = preferences.language || defaults.language;
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.lang = language;
+      document.documentElement.style.colorScheme = theme;
+    } catch {
+      const theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.lang = defaults.language;
+      document.documentElement.style.colorScheme = theme;
+    }
+  })();`;
+}
+
 function createIndexHtml(runtimeConfig) {
   return `<!doctype html>
 <html lang="vi">
@@ -85,6 +112,7 @@ function createIndexHtml(runtimeConfig) {
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
+    <script>${createThemeBootstrapScript()}</script>
     <script>window.__VIETWANDER_CONFIG__ = ${JSON.stringify(runtimeConfig, null, 2)};</script>
     <script type="importmap">${JSON.stringify(importMap, null, 2)}</script>
     <script type="module" src="./main.js"></script>

@@ -1,10 +1,13 @@
 ﻿import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAsyncData } from '../hooks/useAsyncData.js';
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js';
 import { createCheckin, getProvinces } from '../lib/api.js';
 import { demoProvinces } from '../lib/demo-data.js';
 import { canUploadCheckinImages, uploadCheckinImage } from '../lib/firebase.js';
 import { slugify } from '../lib/utils.js';
+import { useI18n } from '../providers/I18nProvider.jsx';
+import { useSettings } from '../providers/SettingsProvider.jsx';
 import { useAuth } from '../providers/AuthProvider.jsx';
 
 function readFileAsDataUrl(file) {
@@ -19,6 +22,8 @@ function readFileAsDataUrl(file) {
 export function CheckinPage() {
   const navigate = useNavigate();
   const { user, refreshProfile, isGuest } = useAuth();
+  const { settings } = useSettings();
+  const { t } = useI18n();
   const { data: provinces } = useAsyncData(
     async () => {
       try {
@@ -30,6 +35,8 @@ export function CheckinPage() {
     [],
     demoProvinces
   );
+
+  useDocumentTitle(t('seo.checkin'));
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
@@ -71,12 +78,12 @@ export function CheckinPage() {
   async function handleSubmit(event) {
     event.preventDefault();
     if (!user) {
-      setMessage('Bạn cần đăng nhập hoặc vào guest demo trước khi tạo check-in.');
+      setMessage(t('checkin.needAuth'));
       return;
     }
 
     setSubmitting(true);
-    setMessage('Đang tạo check-in...');
+    setMessage(t('checkin.creating'));
 
     try {
       let photoUrl = formState.photoUrl.trim();
@@ -90,7 +97,7 @@ export function CheckinPage() {
       }
 
       if (!photoUrl) {
-        throw new Error('Hãy chọn ảnh hoặc nhập URL ảnh để check-in.');
+        throw new Error(t('checkin.pickImageOrUrl'));
       }
 
       await createCheckin({
@@ -101,7 +108,7 @@ export function CheckinPage() {
         photoUrl,
         caption: formState.caption,
         location:
-          formState.lat && formState.lng
+          settings.preferences.showLocation && formState.lat && formState.lng
             ? {
                 lat: Number(formState.lat),
                 lng: Number(formState.lng)
@@ -110,10 +117,10 @@ export function CheckinPage() {
       });
 
       await refreshProfile();
-      setMessage('Tạo check-in thành công. Đang chuyển tới trang tỉnh...');
+      setMessage(t('checkin.success'));
       navigate(`/province/${formState.provinceId}`);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Tạo check-in thất bại.');
+      setMessage(error instanceof Error ? error.message : t('checkin.submitError'));
     } finally {
       setSubmitting(false);
     }
@@ -124,20 +131,20 @@ export function CheckinPage() {
       <section className="page-card">
         <div className="section-heading-row wrap-row">
           <div>
-            <p className="eyebrow">Check-in camera / upload</p>
-            <h1>Tạo check-in mới</h1>
-            <p className="muted-copy">Guest demo có thể dùng ảnh local trực tiếp; nếu có Firebase Storage thật thì app sẽ upload như flow production.</p>
+            <p className="eyebrow">{t('checkin.eyebrow')}</p>
+            <h1>{t('checkin.title')}</h1>
+            <p className="muted-copy">{t('checkin.description')}</p>
           </div>
           <div className="filter-bar">
-            {isGuest ? <span className="status-chip">Guest Demo</span> : null}
-            <span className="pill">{user?.email || 'guest-demo'}</span>
+            {isGuest ? <span className="status-chip">{t('app.guestDemo')}</span> : null}
+            <span className="pill">{user?.email || t('common.guestAccount')}</span>
           </div>
         </div>
 
         <form className="checkin-layout" onSubmit={handleSubmit}>
           <div className="form-stack">
             <label>
-              Tỉnh / thành
+              {t('common.province')}
               <select className="input-field" value={formState.provinceId} onChange={updateField('provinceId')}>
                 {provinces.map((province) => (
                   <option key={province.id} value={province.id}>
@@ -147,51 +154,61 @@ export function CheckinPage() {
               </select>
             </label>
             <label>
-              Địa danh
-              <input className="input-field" value={formState.landmarkName} onChange={updateField('landmarkName')} placeholder="Ví dụ: Cầu Rồng" />
+              {t('common.landmark')}
+              <input className="input-field" value={formState.landmarkName} onChange={updateField('landmarkName')} placeholder={t('checkin.landmarkPlaceholder')} />
             </label>
             <label>
-              Caption
-              <textarea className="input-field textarea-field" value={formState.caption} onChange={updateField('caption')} placeholder="Check-in buổi chiều cực đẹp..." />
+              {t('common.caption')}
+              <textarea className="input-field textarea-field" value={formState.caption} onChange={updateField('caption')} placeholder={t('checkin.captionPlaceholder')} />
             </label>
             <label>
-              Chọn ảnh từ thiết bị
+              {t('checkin.photoInput')}
               <input accept="image/*" capture="environment" className="input-field" onChange={handleFileChange} type="file" />
             </label>
             <label>
-              Hoặc URL ảnh
+              {t('checkin.imageUrlLabel')}
               <input className="input-field" value={formState.photoUrl} onChange={updateField('photoUrl')} placeholder="https://..." />
             </label>
             <div className="location-grid">
               <label>
-                Latitude
-                <input className="input-field" value={formState.lat} onChange={updateField('lat')} placeholder="16.0613" />
+                {t('common.latitude')}
+                <input
+                  className="input-field"
+                  disabled={!settings.preferences.showLocation}
+                  value={formState.lat}
+                  onChange={updateField('lat')}
+                  placeholder={t('checkin.latitudePlaceholder')}
+                />
               </label>
               <label>
-                Longitude
-                <input className="input-field" value={formState.lng} onChange={updateField('lng')} placeholder="108.227" />
+                {t('common.longitude')}
+                <input
+                  className="input-field"
+                  disabled={!settings.preferences.showLocation}
+                  value={formState.lng}
+                  onChange={updateField('lng')}
+                  placeholder={t('checkin.longitudePlaceholder')}
+                />
               </label>
             </div>
             <button className="button primary-button full-width" disabled={submitting} type="submit">
-              {submitting ? 'Đang gửi...' : 'Xác nhận check-in'}
+              {submitting ? t('checkin.submitting') : t('checkin.submit')}
             </button>
             {message ? <div className="banner info-banner">{message}</div> : null}
-            {isGuest ? (
-              <p className="muted-copy small-copy">Trong guest demo, ảnh local sẽ được nhúng tạm vào dữ liệu demo để không phụ thuộc cloud upload.</p>
-            ) : null}
+            {isGuest ? <p className="muted-copy small-copy">{t('checkin.guestHint')}</p> : null}
           </div>
 
           <div className="preview-card">
-            <p className="eyebrow">Preview</p>
+            <p className="eyebrow">{t('common.preview')}</p>
             <h2>{selectedProvince?.fullName || selectedProvince?.name}</h2>
             <p className="muted-copy">{selectedProvince?.description}</p>
-            <img alt={selectedProvince?.name || 'Preview'} className="preview-image" src={previewUrl || formState.photoUrl || selectedProvince?.imageUrl} />
+            <img alt={selectedProvince?.name || t('common.preview')} className="preview-image" src={previewUrl || formState.photoUrl || selectedProvince?.imageUrl} />
             <div className="hero-actions wrap-row">
               <Link className="button ghost-button" to={`/province/${formState.provinceId}`}>
-                Xem tỉnh này
+                {t('checkin.viewProvince')}
               </Link>
               <Link className="button ghost-button" to="/collection">
-                Mở collection
+                {t('checkin.openCollection')}
               </Link>
             </div>
           </div>

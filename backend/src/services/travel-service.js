@@ -3,8 +3,35 @@ import { seedProvinces } from '../data/seed.js';
 import { badRequest, notFound } from '../lib/http-error.js';
 import { optionalGeoPoint, requireString } from '../lib/validation.js';
 
+const defaultUserPreferences = {
+  theme: 'system',
+  language: 'vi',
+  showLocation: true,
+  autoplayVideo: false
+};
+
 function createTimestamp() {
   return new Date().toISOString();
+}
+
+function hasOwn(source, key) {
+  return Object.prototype.hasOwnProperty.call(source, key);
+}
+
+function readValue(input, key, fallbackValue) {
+  return hasOwn(input, key) ? input[key] : fallbackValue;
+}
+
+function normalizeUserPreferences(inputPreferences = {}, existingPreferences = {}) {
+  const source = inputPreferences && typeof inputPreferences === 'object' ? inputPreferences : {};
+  const current = existingPreferences && typeof existingPreferences === 'object' ? existingPreferences : {};
+
+  return {
+    theme: source.theme ?? current.theme ?? defaultUserPreferences.theme,
+    language: source.language ?? current.language ?? defaultUserPreferences.language,
+    showLocation: source.showLocation ?? current.showLocation ?? defaultUserPreferences.showLocation,
+    autoplayVideo: source.autoplayVideo ?? current.autoplayVideo ?? defaultUserPreferences.autoplayVideo
+  };
 }
 
 function slugToBadge(province) {
@@ -17,8 +44,12 @@ function buildProvinceHashtag(province) {
 
 function normalizeUserUpsert(userId, input = {}, existingUser = null) {
   const now = createTimestamp();
-  const displayName = input.displayName ?? existingUser?.displayName ?? 'Du khách mới';
-  const avatarUrl = input.avatarUrl ?? input.photoURL ?? existingUser?.avatarUrl ?? existingUser?.photoURL ?? null;
+  const displayName = readValue(input, 'displayName', existingUser?.displayName ?? 'Du khách mới');
+  const avatarUrl = hasOwn(input, 'avatarUrl')
+    ? input.avatarUrl
+    : hasOwn(input, 'photoURL')
+      ? input.photoURL
+      : (existingUser?.avatarUrl ?? existingUser?.photoURL ?? null);
   const provincesVisited =
     input.provincesVisited ??
     input.visitedProvinceCount ??
@@ -26,17 +57,21 @@ function normalizeUserUpsert(userId, input = {}, existingUser = null) {
     existingUser?.visitedProvinceCount ??
     0;
   const badges = Array.isArray(input.badges) ? [...new Set(input.badges)] : existingUser?.badges ?? [];
-  const level = input.level ?? existingUser?.level ?? 1;
-  const levelTitle = input.levelTitle ?? existingUser?.levelTitle ?? 'Du khách';
-  const verifiedCheckinCount = input.verifiedCheckinCount ?? existingUser?.verifiedCheckinCount ?? 0;
+  const level = readValue(input, 'level', existingUser?.level ?? 1);
+  const levelTitle = readValue(input, 'levelTitle', existingUser?.levelTitle ?? 'Du khách');
+  const verifiedCheckinCount = readValue(input, 'verifiedCheckinCount', existingUser?.verifiedCheckinCount ?? 0);
+  const preferences = normalizeUserPreferences(input.preferences, existingUser?.preferences);
 
   return {
     uid: userId,
     displayName,
-    username: input.username ?? existingUser?.username ?? null,
+    username: readValue(input, 'username', existingUser?.username ?? null),
+    bio: readValue(input, 'bio', existingUser?.bio ?? ''),
     avatarUrl,
     photoURL: avatarUrl,
-    email: input.email ?? existingUser?.email ?? null,
+    email: readValue(input, 'email', existingUser?.email ?? null),
+    homeProvinceId: readValue(input, 'homeProvinceId', existingUser?.homeProvinceId ?? null),
+    preferences,
     level,
     levelTitle,
     provincesVisited,
@@ -45,7 +80,7 @@ function normalizeUserUpsert(userId, input = {}, existingUser = null) {
     badges,
     createdAt: existingUser?.createdAt ?? now,
     lastActive: input.lastActive ?? now,
-    updatedAt: now,
+    updatedAt: now
   };
 }
 
@@ -62,7 +97,7 @@ function normalizeProvinceUpsert(provinceId, input = {}, existingProvince = null
     landmarks: Array.isArray(input.landmarks) ? input.landmarks : existingProvince?.landmarks ?? [],
     popularTags: Array.isArray(input.popularTags) ? input.popularTags : existingProvince?.popularTags ?? [],
     createdAt: existingProvince?.createdAt ?? input.createdAt ?? now,
-    updatedAt: now,
+    updatedAt: now
   };
 }
 
@@ -86,7 +121,7 @@ function normalizeStandalonePost(input, user, province) {
     isPublic: input.isPublic ?? true,
     likesCount: input.likesCount ?? 0,
     commentsCount: input.commentsCount ?? 0,
-    createdAt: input.createdAt ?? now,
+    createdAt: input.createdAt ?? now
   };
 }
 
@@ -107,7 +142,7 @@ function normalizeCheckinPayload(input, user, province) {
     location: input.location ?? null,
     createdAt: input.createdAt ?? now,
     likesCount: input.likesCount ?? 0,
-    commentsCount: input.commentsCount ?? 0,
+    commentsCount: input.commentsCount ?? 0
   };
 }
 
@@ -120,7 +155,7 @@ export function createTravelService(repository = getRepository()) {
         service: 'vietwander-backend',
         status: 'ok',
         databaseMode: repository.mode,
-        schemaVersion: '2026-03-08',
+        schemaVersion: '2026-03-08'
       };
     },
 
@@ -137,8 +172,8 @@ export function createTravelService(repository = getRepository()) {
           checkins: '/api/checkins',
           posts: '/api/posts',
           leaderboard: '/api/leaderboard',
-          feedAlias: '/api/feed',
-        },
+          feedAlias: '/api/feed'
+        }
       };
     },
 
@@ -182,7 +217,7 @@ export function createTravelService(repository = getRepository()) {
         throw notFound('Không tìm thấy user.', { userId });
       }
 
-      return user;
+      return normalizeUserUpsert(userId, user, user);
     },
 
     async upsertUser(userId, input = {}) {
@@ -214,7 +249,7 @@ export function createTravelService(repository = getRepository()) {
 
       const [existingUser, province] = await Promise.all([
         repository.getUserById(userId),
-        repository.getProvinceById(provinceId),
+        repository.getProvinceById(provinceId)
       ]);
 
       if (!province) {
@@ -245,7 +280,7 @@ export function createTravelService(repository = getRepository()) {
 
       const [existingUser, province] = await Promise.all([
         repository.getUserById(userId),
-        repository.getProvinceById(provinceId),
+        repository.getProvinceById(provinceId)
       ]);
 
       if (!province) {
@@ -256,7 +291,7 @@ export function createTravelService(repository = getRepository()) {
       const priorProvinceCheckins = await repository.listCheckins({
         userId: user.uid,
         provinceId: province.id,
-        limit: 1,
+        limit: 1
       });
       const isNewProvince = priorProvinceCheckins.length === 0;
 
@@ -266,7 +301,7 @@ export function createTravelService(repository = getRepository()) {
           userId,
           provinceId,
           photoUrl,
-          location,
+          location
         },
         user,
         province
@@ -278,12 +313,12 @@ export function createTravelService(repository = getRepository()) {
             ...input,
             userId,
             provinceId,
-            photoUrl,
+            photoUrl
           },
           user,
           province
         ),
-        id: checkin.id,
+        id: checkin.id
       };
 
       await repository.createPost(mirroredPostPayload);
@@ -306,7 +341,7 @@ export function createTravelService(repository = getRepository()) {
             provincesVisited: nextVisited,
             visitedProvinceCount: nextVisited,
             verifiedCheckinCount: (user.verifiedCheckinCount ?? 0) + 1,
-            lastActive: createTimestamp(),
+            lastActive: createTimestamp()
           },
           user
         )
@@ -316,8 +351,8 @@ export function createTravelService(repository = getRepository()) {
         checkin,
         provincePostId: mirroredPostPayload.id,
         isNewProvince,
-        user: nextUser,
+        user: nextUser
       };
-    },
+    }
   };
 }

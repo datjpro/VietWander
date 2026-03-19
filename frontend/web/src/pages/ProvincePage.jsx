@@ -3,12 +3,17 @@ import { EmptyState } from '../components/EmptyState.jsx';
 import { PostCard } from '../components/PostCard.jsx';
 import { ProvinceMap } from '../components/ProvinceMap.jsx';
 import { useAsyncData } from '../hooks/useAsyncData.js';
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js';
 import { getProvince, getProvincePosts, getProvinces } from '../lib/api.js';
 import { demoPosts, demoProvinces } from '../lib/demo-data.js';
 import { buildGoogleMapsSearchUrl } from '../lib/province-map-data.js';
+import { useI18n } from '../providers/I18nProvider.jsx';
+import { useSettings } from '../providers/SettingsProvider.jsx';
 
 export function ProvincePage() {
   const { provinceId = '' } = useParams();
+  const { t } = useI18n();
+  const { settings } = useSettings();
 
   const { data, loading, error } = useAsyncData(
     async () => {
@@ -36,6 +41,8 @@ export function ProvincePage() {
   const province = data.province;
   const mapsUrl = buildGoogleMapsSearchUrl(province.location, province.fullName || province.name);
 
+  useDocumentTitle(province.fullName || province.name || t('seo.home'));
+
   return (
     <div className="page-section-stack">
       <section className="page-card province-hero-card">
@@ -46,15 +53,15 @@ export function ProvincePage() {
           <p>{province.description}</p>
           <div className="hero-actions wrap-row">
             <Link className="button primary-button" to="/checkin">
-              Check-in tại đây
+              {t('province.checkinHere')}
             </Link>
-            {mapsUrl ? (
+            {settings.preferences.showLocation && mapsUrl ? (
               <a className="button ghost-button" href={mapsUrl} rel="noreferrer" target="_blank">
-                Mở trên Google Maps
+                {t('common.openGoogleMaps')}
               </a>
             ) : (
               <Link className="button ghost-button" to="/feed">
-                Xem feed chung
+                {t('province.viewFeed')}
               </Link>
             )}
           </div>
@@ -62,7 +69,7 @@ export function ProvincePage() {
       </section>
 
       {error ? <div className="banner warning-banner">{error}</div> : null}
-      {loading ? <div className="banner info-banner">Đang tải chi tiết tỉnh...</div> : null}
+      {loading ? <div className="banner info-banner">{t('province.loading')}</div> : null}
 
       <section className="content-grid two-column-grid">
         <ProvinceMap provinces={data.provinces} activeProvinceId={provinceId} />
@@ -70,10 +77,10 @@ export function ProvincePage() {
         <section className="page-card">
           <div className="section-heading-row">
             <div>
-              <p className="eyebrow">Landmarks</p>
-              <h2>Địa danh nổi bật</h2>
+              <p className="eyebrow">{t('province.landmarksEyebrow')}</p>
+              <h2>{t('province.landmarksTitle')}</h2>
             </div>
-            <span className="pill">{province.landmarks?.length || 0} địa danh</span>
+            <span className="pill">{t('province.landmarkCount', { count: province.landmarks?.length || 0 })}</span>
           </div>
           <div className="landmark-list">
             {(province.landmarks || []).map((landmark) => (
@@ -83,7 +90,7 @@ export function ProvincePage() {
                 </div>
                 <div>
                   <h3>{landmark.name}</h3>
-                  <p className="muted-copy">{landmark.desc || 'Địa danh đáng ghé thăm.'}</p>
+                  <p className="muted-copy">{landmark.desc || t('province.landmarkFallback')}</p>
                 </div>
               </article>
             ))}
@@ -94,11 +101,11 @@ export function ProvincePage() {
       <section className="page-card">
         <div className="section-heading-row">
           <div>
-            <p className="eyebrow">Realtime by province</p>
-            <h2>Feed của {province.name}</h2>
+            <p className="eyebrow">{t('province.feedEyebrow')}</p>
+            <h2>{t('province.feedTitle', { name: province.name })}</h2>
           </div>
           <Link className="inline-link" to="/checkin">
-            Tạo check-in mới
+            {t('common.createNewCheckin')}
           </Link>
         </div>
         {data.posts.length ? (
@@ -109,11 +116,11 @@ export function ProvincePage() {
           </div>
         ) : (
           <EmptyState
-            title="Chưa có bài đăng cho tỉnh này"
-            description="Tạo check-in đầu tiên để làm đầy feed địa phương."
+            title={t('province.emptyTitle')}
+            description={t('province.emptyDescription')}
             action={
               <Link className="button primary-button" to="/checkin">
-                Check-in ngay
+                {t('home.checkinNow')}
               </Link>
             }
           />

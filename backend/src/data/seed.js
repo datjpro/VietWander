@@ -29,7 +29,7 @@ const demoTravelerJourney = [
   {
     id: 'checkin-demo-traveler-3',
     provinceId: 'ninh-binh',
-    caption: 'Tam Cốc mùa xanh nhìn như một lớp màu nước trên bản đồ cartoon.',
+    caption: 'Tam Cốc mùa xanh nhìn như một lớp màu nước trên bản đồ minh họa.',
     photoUrl: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80',
     location: { lat: 20.215, lng: 105.92299 },
     likesCount: 28,
@@ -39,7 +39,7 @@ const demoTravelerJourney = [
   {
     id: 'checkin-demo-traveler-4',
     provinceId: 'hue',
-    caption: 'Một chiều mưa nhẹ ở Đại Nội, đúng kiểu postcard cổ điển của miền Trung.',
+    caption: 'Một chiều mưa nhẹ ở Đại Nội, đúng kiểu bưu thiếp cổ điển của miền Trung.',
     photoUrl: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=1200&q=80',
     location: { lat: 16.4637, lng: 107.5909 },
     likesCount: 21,
@@ -49,7 +49,7 @@ const demoTravelerJourney = [
   {
     id: 'checkin-demo-traveler-5',
     provinceId: 'da-nang',
-    caption: 'Cầu Rồng lên đèn rồi, đây chắc chắn là một trong những stop đáng show nhất của demo.',
+    caption: 'Cầu Rồng lên đèn rồi, đây chắc chắn là một trong những điểm dừng nổi bật nhất của demo.',
     photoUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
     location: { lat: 16.0613, lng: 108.227 },
     likesCount: 39,
@@ -59,7 +59,7 @@ const demoTravelerJourney = [
   {
     id: 'checkin-demo-traveler-6',
     provinceId: 'khanh-hoa',
-    caption: 'Biển Nha Trang hôm nay trong và sáng, rất hợp để thêm vào floating card trên home.',
+    caption: 'Biển Nha Trang hôm nay trong và sáng, rất hợp để đưa lên thẻ nổi ở trang chủ.',
     photoUrl: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
     location: { lat: 12.2388, lng: 109.1967 },
     likesCount: 26,
@@ -69,7 +69,7 @@ const demoTravelerJourney = [
   {
     id: 'checkin-demo-traveler-7',
     provinceId: 'lam-dong',
-    caption: 'Đà Lạt sáng lạnh và có nắng xiên qua rừng thông, mood rất khác hẳn các tỉnh biển.',
+    caption: 'Đà Lạt sáng lạnh và có nắng xiên qua rừng thông, bầu không khí rất khác các tỉnh biển.',
     photoUrl: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
     location: { lat: 11.9404, lng: 108.4583 },
     likesCount: 18,
@@ -79,7 +79,7 @@ const demoTravelerJourney = [
   {
     id: 'checkin-demo-traveler-8',
     provinceId: 'can-tho',
-    caption: 'Đổi nhịp sang miền Tây với chợ nổi, đúng active quest Mekong Delta Explorer.',
+    caption: 'Đổi nhịp sang miền Tây với chợ nổi, đúng tinh thần nhiệm vụ đang mở của demo.',
     photoUrl: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=1200&q=80',
     location: { lat: 10.0452, lng: 105.7469 },
     likesCount: 22,
@@ -89,7 +89,7 @@ const demoTravelerJourney = [
   {
     id: 'checkin-demo-traveler-9',
     provinceId: 'ho-chi-minh',
-    caption: 'Kết thúc vòng demo ở Sài Gòn với năng lượng phố xá và food tour đêm.',
+    caption: 'Kết thúc vòng demo ở Sài Gòn với năng lượng phố xá và hành trình ăn đêm.',
     photoUrl: 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80',
     location: { lat: 10.7769, lng: 106.7009 },
     likesCount: 33,
@@ -106,11 +106,19 @@ export const seedUsers = [
   {
     id: 'demo-traveler',
     uid: 'demo-traveler',
-    displayName: 'Demo Traveler',
+    displayName: 'Du khách demo',
     username: 'demo.traveler',
+    bio: 'Nhân vật demo mặc định của VietWander, chuyên mở đường cho những vòng pitch bản đồ hoạt họa.',
     avatarUrl: 'https://images.unsplash.com/photo-1542204625-de293a2f8ff0?auto=format&fit=crop&w=400&q=80',
     photoURL: 'https://images.unsplash.com/photo-1542204625-de293a2f8ff0?auto=format&fit=crop&w=400&q=80',
     email: 'demo@vietwander.app',
+    homeProvinceId: 'da-nang',
+    preferences: {
+      theme: 'system',
+      language: 'vi',
+      showLocation: true,
+      autoplayVideo: false
+    },
     level: 12,
     levelTitle: 'Người săn hành trình',
     provincesVisited: travelerBadges.length,
@@ -126,9 +134,17 @@ export const seedUsers = [
     uid: 'demo-alex',
     displayName: 'Alex Nguyen',
     username: 'alex.langthang',
+    bio: 'Thích các lịch trình biển - núi và luôn muốn leo hạng trên bảng xếp hạng.',
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
     photoURL: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
     email: 'alex@example.com',
+    homeProvinceId: 'da-nang',
+    preferences: {
+      theme: 'light',
+      language: 'en',
+      showLocation: true,
+      autoplayVideo: true
+    },
     level: 17,
     levelTitle: 'Nhà thám hiểm',
     provincesVisited: 18,
@@ -144,9 +160,17 @@ export const seedUsers = [
     uid: 'demo-linh',
     displayName: 'Linh Cao',
     username: 'linh.travels',
+    bio: 'Ưa những hành trình dài ngày với bộ ảnh dày và nhịp check-in đều tay.',
     avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
     photoURL: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
     email: 'linh@example.com',
+    homeProvinceId: 'ha-noi',
+    preferences: {
+      theme: 'dark',
+      language: 'vi',
+      showLocation: true,
+      autoplayVideo: false
+    },
     level: 22,
     levelTitle: 'Nhà thám hiểm',
     provincesVisited: 24,
@@ -207,7 +231,7 @@ function createPost(input) {
     id: input.id,
     userId: input.userId,
     userUid: input.userId,
-    authorName: input.authorName || user?.displayName || 'Traveler',
+    authorName: input.authorName || user?.displayName || 'Du khách',
     provinceId: province.id,
     provinceName: province.name,
     landmarkId: input.landmarkId || province.landmarks?.[0]?.id || null,
