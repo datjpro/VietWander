@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CheckViet | Explorer Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee7c",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102218",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 px-10 py-4 bg-white dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary/20 rounded-lg">
+<span class="material-symbols-outlined text-primary">map</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">CheckViet</h2>
+</div>
+<label class="flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-full h-full">
+<div class="text-slate-500 flex border-none bg-primary/10 items-center justify-center pl-4 rounded-l-full" data-icon="search">
+<span class="material-symbols-outlined text-sm">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-full text-slate-900 focus:outline-0 focus:ring-0 border-none bg-primary/10 focus:border-none h-full placeholder:text-slate-500 px-4 pl-2 text-sm font-normal" placeholder="Search provinces..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-8 items-center">
+<nav class="flex items-center gap-9">
+<a class="text-slate-700 dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-slate-700 dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Map</a>
+<a class="text-primary text-sm font-bold" href="#">Collection</a>
+<a class="text-slate-700 dark:text-slate-200 text-sm font-medium hover:text-primary transition-colors" href="#">Community</a>
+</nav>
+<div class="flex gap-3">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-primary/10 text-slate-900 dark:text-slate-100">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-primary/10 text-slate-900 dark:text-slate-100">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="User profile avatar smiling young man" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDuMEQR38vANi-6A3pay2CiTpBayPEUFIUdKQGAjaSASsp7twZeKcM1E-LWzPW4kl31jXkydQ59Z0kJxpaR51Lbny_ixSHyKXbBVq0aVAnviFsrRXmdNDDRpB4WOCnnBOSFShZejXiIAAxGl3mSqqa1k_8Ut9rjjYQyge4eBKaO3ZGgA3mhkpqlAg7o43qhCC1E99NERt9zrxJbnVVViX7retgpkfOR5UzxK1CSeNFA0eZJJ6ic4oza5gYKN96DzSIZOpKgJRYM_DuQ");'></div>
+</div>
+</header>
+<main class="max-w-[1280px] mx-auto w-full px-10 py-8">
+<!-- User Profile Hero -->
+<div class="flex flex-col gap-6 p-8 rounded-xl bg-white dark:bg-slate-900 border border-primary/10 shadow-sm mb-8">
+<div class="flex w-full flex-col gap-6 md:flex-row md:justify-between md:items-center">
+<div class="flex gap-6 items-center">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-32 ring-4 ring-primary ring-offset-4 ring-offset-white dark:ring-offset-slate-900" data-alt="Main profile picture of Alex Explorer" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4Ui5vAIEPCFIFPhXEg7wL5Mr2oEq5pGbmOV2EPdcIEdeeORigKwJqq2MTBmUBdr8EPtQqRqiLMXVeJQx5SBvCfQptr1evOhGd9Imbxqlm65Ik4i1_UisnuNSYZnZVDnCjJDjtD8vMMdy5-oe2Uv-_5XaoECLtAXK8ZC7mfjC2Hj_C0WWu_wr7uKlZI2U4kcmG1DxEvSKgo2374Q83Ij30IXGfuIUzXF9uJtU_fmsvOsDLySaA1s5Y7yFcT6Okzraa4suCJVQMEIpv");'></div>
+<div class="absolute -bottom-2 -right-2 bg-primary text-slate-900 font-bold text-xs px-3 py-1 rounded-full shadow-lg">LVL 14</div>
+</div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-3xl font-bold leading-tight">Alex Explorer</h1>
+<p class="text-slate-500 dark:text-slate-400 text-base font-medium">Joined March 2023 • Wanderlust Enthusiast</p>
+<div class="flex gap-4 mt-2">
+<div class="flex items-center gap-1 text-slate-600 dark:text-slate-300 text-sm">
+<span class="material-symbols-outlined text-primary text-lg">location_on</span>
+                                        24 Provinces Visited
+                                    </div>
+<div class="flex items-center gap-1 text-slate-600 dark:text-slate-300 text-sm">
+<span class="material-symbols-outlined text-primary text-lg">military_tech</span>
+                                        12 Badges Earned
+                                    </div>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex min-w-[120px] cursor-pointer items-center justify-center rounded-full h-11 px-6 bg-primary/10 text-slate-900 dark:text-slate-100 font-bold text-sm hover:bg-primary/20 transition-all">
+                                Edit Profile
+                            </button>
+<button class="flex min-w-[120px] cursor-pointer items-center justify-center rounded-full h-11 px-6 bg-primary text-slate-900 font-bold text-sm shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+                                Share Progress
+                            </button>
+</div>
+</div>
+<!-- Progress Bar Section -->
+<div class="flex flex-col gap-3 pt-4 border-t border-primary/5">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-slate-900 dark:text-white text-lg font-bold">Explorer Rank</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm italic">"Keep roaming, the north is calling!"</p>
+</div>
+<p class="text-primary text-lg font-bold">65% <span class="text-slate-400 font-normal text-sm ml-1">to Level 15</span></p>
+</div>
+<div class="relative h-4 w-full rounded-full bg-primary/10 overflow-hidden">
+<div class="absolute top-0 left-0 h-full rounded-full bg-primary" style="width: 65%;"></div>
+<div class="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+</div>
+<div class="flex justify-between items-center text-slate-500 text-xs font-semibold">
+<span>3,250 XP</span>
+<span>5,000 XP</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Map Card -->
+<div class="lg:col-span-2 flex flex-col gap-4 p-6 rounded-xl bg-white dark:bg-slate-900 border border-primary/10 shadow-sm">
+<div class="flex justify-between items-center">
+<h3 class="text-slate-900 dark:text-white text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">explore</span>
+                                Your Vietnam Journey
+                            </h3>
+<button class="text-primary text-sm font-bold hover:underline">View Full Map</button>
+</div>
+<div class="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border-2 border-primary/5" data-location="Vietnam" style="">
+<img class="w-full h-full object-cover opacity-80" data-alt="Illustrated stylized map of Vietnam with highlighted regions" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9FOgfkT8sYsBl8G6yGsS6FXVBwZySez-vY_A94ZGEU1av47NxawFvjbmf6MwMQ1PrQXqtjPUPMhbYhRvVYIPb-AmFPhTAWqCeuiL2L0cd5__LyVxqeV2TMx63zL6EFTTTemzia8LEKMjGtmwVN0IS372llw5dq_j9EeSvEXXn5nInKugaw3lEmka-MKUPYXPoKl609KIc2Xeol_RGLYxwGrVOJlCRnvGpYxqyb8O3KLoFfzodGcbAx_S5ZJcLk4NuWudWu6h9lrft"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end p-6">
+<div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-3 rounded-lg flex gap-4 items-center">
+<div class="flex flex-col">
+<span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Currently In</span>
+<span class="text-slate-900 dark:text-white font-bold">Hanoi Capital</span>
+</div>
+<div class="h-8 w-[1px] bg-slate-200"></div>
+<div class="flex flex-col">
+<span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Next Goal</span>
+<span class="text-primary font-bold">Ha Long Bay</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Statistics & Recent Activity -->
+<div class="flex flex-col gap-6">
+<div class="p-6 rounded-xl bg-primary text-slate-900 shadow-lg shadow-primary/10">
+<h4 class="text-sm font-bold uppercase tracking-widest opacity-70 mb-4">Quick Stats</h4>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white/20 p-3 rounded-lg">
+<span class="block text-2xl font-black">24</span>
+<span class="text-xs font-bold opacity-80">Provinces</span>
+</div>
+<div class="bg-white/20 p-3 rounded-lg">
+<span class="block text-2xl font-black">156</span>
+<span class="text-xs font-bold opacity-80">Check-ins</span>
+</div>
+<div class="bg-white/20 p-3 rounded-lg">
+<span class="block text-2xl font-black">8</span>
+<span class="text-xs font-bold opacity-80">UNESCO Sites</span>
+</div>
+<div class="bg-white/20 p-3 rounded-lg">
+<span class="block text-2xl font-black">32</span>
+<span class="text-xs font-bold opacity-80">Streaks</span>
+</div>
+</div>
+</div>
+<div class="p-6 rounded-xl bg-white dark:bg-slate-900 border border-primary/10 shadow-sm flex flex-col gap-4">
+<h4 class="text-slate-900 dark:text-white font-bold">Recent Milestones</h4>
+<div class="flex flex-col gap-3">
+<div class="flex gap-3 items-center p-2 rounded-lg hover:bg-primary/5 transition-colors">
+<div class="size-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-800 dark:text-slate-200">Pho Master</p>
+<p class="text-xs text-slate-500">Tried 10 regional Pho styles</p>
+</div>
+</div>
+<div class="flex gap-3 items-center p-2 rounded-lg hover:bg-primary/5 transition-colors">
+<div class="size-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined">waves</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-800 dark:text-slate-200">Coastal Cruiser</p>
+<p class="text-xs text-slate-500">Visited 5 coastal provinces</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Badges Collection Grid -->
+<div class="mt-8 flex flex-col gap-6">
+<div class="flex justify-between items-center">
+<h3 class="text-slate-900 dark:text-white text-2xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">workspace_premium</span>
+                            Earned Badges
+                        </h3>
+<div class="flex gap-2">
+<span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">All</span>
+<span class="px-3 py-1 rounded-full text-slate-500 text-xs font-bold hover:bg-slate-100 cursor-pointer">Locked</span>
+<span class="px-3 py-1 rounded-full text-slate-500 text-xs font-bold hover:bg-slate-100 cursor-pointer">Rare</span>
+</div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+<!-- Badge 1 -->
+<div class="group flex flex-col items-center gap-3 p-6 rounded-xl bg-white dark:bg-slate-900 border border-primary/10 shadow-sm hover:border-primary transition-all cursor-help relative">
+<div class="size-20 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1">eco</span>
+</div>
+<span class="text-sm font-bold text-slate-800 dark:text-slate-200 text-center">Jungle Trekker</span>
+</div>
+<!-- Badge 2 -->
+<div class="group flex flex-col items-center gap-3 p-6 rounded-xl bg-white dark:bg-slate-900 border border-primary/10 shadow-sm hover:border-primary transition-all cursor-help">
+<div class="size-20 rounded-full bg-gradient-to-br from-yellow-400/30 to-yellow-400/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-yellow-500 text-4xl" style="font-variation-settings: 'FILL' 1">sunny</span>
+</div>
+<span class="text-sm font-bold text-slate-800 dark:text-slate-200 text-center">Sun Seeker</span>
+</div>
+<!-- Badge 3 -->
+<div class="group flex flex-col items-center gap-3 p-6 rounded-xl bg-white dark:bg-slate-900 border border-primary/10 shadow-sm hover:border-primary transition-all cursor-help">
+<div class="size-20 rounded-full bg-gradient-to-br from-blue-400/30 to-blue-400/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-blue-500 text-4xl" style="font-variation-settings: 'FILL' 1">sailing</span>
+</div>
+<span class="text-sm font-bold text-slate-800 dark:text-slate-200 text-center">Halong Hero</span>
+</div>
+<!-- Badge 4 -->
+<div class="group flex flex-col items-center gap-3 p-6 rounded-xl bg-white dark:bg-slate-900 border border-primary/10 shadow-sm hover:border-primary transition-all cursor-help">
+<div class="size-20 rounded-full bg-gradient-to-br from-purple-400/30 to-purple-400/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-purple-500 text-4xl" style="font-variation-settings: 'FILL' 1">temple_buddhist</span>
+</div>
+<span class="text-sm font-bold text-slate-800 dark:text-slate-200 text-center">Zen Master</span>
+</div>
+<!-- Badge 5 -->
+<div class="group flex flex-col items-center gap-3 p-6 rounded-xl bg-white dark:bg-slate-900 border border-primary/10 shadow-sm hover:border-primary transition-all cursor-help">
+<div class="size-20 rounded-full bg-gradient-to-br from-red-400/30 to-red-400/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-red-500 text-4xl" style="font-variation-settings: 'FILL' 1">motorcycle</span>
+</div>
+<span class="text-sm font-bold text-slate-800 dark:text-slate-200 text-center">Easy Rider</span>
+</div>
+<!-- Badge 6 Locked -->
+<div class="group flex flex-col items-center gap-3 p-6 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 opacity-60">
+<div class="size-20 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-4xl">lock</span>
+</div>
+<span class="text-sm font-bold text-slate-400 text-center">Hidden Gem</span>
+</div>
+</div>
+</div>
+<!-- Province Highlights -->
+<div class="mt-12 mb-8">
+<h3 class="text-slate-900 dark:text-white text-2xl font-bold mb-6">Recently Explored</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="group rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-primary/10 shadow-sm hover:shadow-md transition-shadow">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Breathtaking view of Sapa rice terraces in fog" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXnbFlJr9KcYxaPwWrRq74QsOqiOxhKnoVf0GVCVh109v2Gnd4QORSfPcUJ0Ej27NsGcxwLl8bgUwVs-n_GerhFPD6h9DIzOWBDbSRi1mJuWNKiZl-6-hHE67yn9QCv8HXyBH5V1i_W6PbCDIIwrAJ9jg7LqXdNa6e-TLP4jG7iYufl6XrGLI8HHoWV8N01a88AUmqpPS-SedhYgYw86nZQvkzM5lMc2_-MxfkOSTLTnHXT9T1L5vQQppcLDpsHpde68ojCIbJ0xND"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-center mb-2">
+<span class="text-xs font-bold text-primary uppercase">North Vietnam</span>
+<span class="text-xs text-slate-400">Oct 12, 2023</span>
+</div>
+<h4 class="text-lg font-bold text-slate-900 dark:text-white">Lao Cai - Sapa</h4>
+<p class="text-sm text-slate-500 mt-2 line-clamp-2">Conquered Fansipan peak and stayed in a remote Hmong homestay. The trekking was intense but worth it.</p>
+</div>
+</div>
+<div class="group rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-primary/10 shadow-sm hover:shadow-md transition-shadow">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Ancient town of Hoi An with colorful lanterns at night" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDldpJk6BMqtUNQ-mF-kswroDOYUmhlx8DATrAT5WEwR_0rRhbJuadDQ6b5Y8tj6vWZgTZJP-wfLyjfvIklsb_D91cKG7IaU_FTyevvZVLQBW6AL-r0apD1EgDxWH0LSqjkrK8vRr0tEg2dw2T9dmiHwJUgc_Vk5sJa6lGJwJ48ylvLtUM_31H94YpoNPKEOnFEAIBjcVIzaO30-ueORAcuEml3ikQfQyoG79ccnr7jZhQNgC5sqlmfobx87V-At7Jr-EkBRMGJwqVQ"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-center mb-2">
+<span class="text-xs font-bold text-primary uppercase">Central Vietnam</span>
+<span class="text-xs text-slate-400">Sep 28, 2023</span>
+</div>
+<h4 class="text-lg font-bold text-slate-900 dark:text-white">Quang Nam - Hoi An</h4>
+<p class="text-sm text-slate-500 mt-2 line-clamp-2">Lantern festival was magical. Had the best Cao Lau near the river. Met fellow explorers from CheckViet community!</p>
+</div>
+</div>
+<div class="group rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-primary/10 shadow-sm hover:shadow-md transition-shadow">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Modern skyline of Ho Chi Minh City at sunset" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUwVfQfEfgjMARXfVdCGCBbdfiGIf7daOArdZGhrBrZ60fKu9xtYKJMDCFu9nNr8IqxOUd4UzXxJDZ3Gd6nh7E2JrONVoiLVlzpHZ-Lqx-SInEo_GPk2nFQ5cudd78HQNma2W1H3kzZSUKGJTW-kO9EI4fwq7Omc4bwHNN_TbSaFZ1oQ9vCmp-PHhyrQBHKFS0ONcJ5KXfTW6fz4oTkl7hhphEh4ccrClSa3dfJinYZ6sERk35aHzOU4sa1Y9m38g4x7XTk7mHuLjk"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-center mb-2">
+<span class="text-xs font-bold text-primary uppercase">South Vietnam</span>
+<span class="text-xs text-slate-400">Aug 15, 2023</span>
+</div>
+<h4 class="text-lg font-bold text-slate-900 dark:text-white">Ho Chi Minh City</h4>
+<p class="text-sm text-slate-500 mt-2 line-clamp-2">The energy of the city is unmatched. Coffee culture here is on another level. Check-in at Independence Palace.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation for Mobile Feel or Simple Footer -->
+<footer class="mt-auto border-t border-primary/10 py-10 bg-white dark:bg-slate-900">
+<div class="max-w-[1280px] mx-auto px-10 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6 flex items-center justify-center bg-primary/20 rounded">
+<span class="material-symbols-outlined text-sm">map</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold">CheckViet</h2>
+</div>
+<div class="flex gap-8 text-sm text-slate-500 font-medium">
+<a class="hover:text-primary" href="#">About</a>
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Contact Support</a>
+</div>
+<p class="text-xs text-slate-400">© 2024 CheckViet. Explore responsibly.</p>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

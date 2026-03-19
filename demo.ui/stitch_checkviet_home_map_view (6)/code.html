@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CheckViet | Leaderboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee7c",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102218",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .podium-gradient {
+            background: linear-gradient(180deg, rgba(43, 238, 124, 0.2) 0%, rgba(43, 238, 124, 0) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 px-10 py-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined font-bold">explore</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">CheckViet</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-primary text-sm font-bold leading-normal border-b-2 border-primary pb-1" href="#">Leaderboard</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Map Explorer</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Challenges</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Badges</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<label class="hidden lg:flex flex-col min-w-64 h-10">
+<div class="flex w-full flex-1 items-stretch rounded-full bg-primary/10 px-4">
+<div class="text-primary flex items-center justify-center pr-2">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-transparent focus:ring-0 text-sm placeholder:text-slate-500" placeholder="Search explorers..." value=""/>
+</div>
+</label>
+<button class="flex items-center justify-center rounded-full size-10 bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full border-2 border-primary p-0.5">
+<img alt="User Profile" class="h-full w-full rounded-full object-cover" data-alt="Avatar of the logged in user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUGTk36rTWk-yK3sQIdptN_GOX1sJZknxEppphAAqhSJFcP61a817ya0wDktZ6hZZNNLSRaHpkRD8w72sMLCXPiNPh_I3JWTGMcgb9Pney3qWrQghXHicoItCHTsxvdgQwjgpcC44YvY23XYhw8akIJwuT-1fyiLcWwDYlcXummWbHjH8DcPbwifgSC-nTGfhWg0YmYivTaS5vsmppJcSB6lh_8n_5437JjnSXMk1Uh7PH1WjuJs0v6e0Rl4S_LwAyOJkC0SMRmYKh"/>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
+<!-- Hero Header -->
+<div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
+<div class="max-w-2xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+<span class="material-symbols-outlined text-xs">workspace_premium</span>
+                            Weekly Ranking
+                        </div>
+<h1 class="text-5xl font-black tracking-tight mb-4">Vietnam's Top <span class="text-primary">Explorers</span></h1>
+<p class="text-slate-600 dark:text-slate-400 text-lg">Celebrating the travelers who checked into the most provinces this week. Are you on the list?</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-6 py-3 rounded-full bg-primary/10 text-primary font-bold hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined">calendar_month</span>
+                            Last Month
+                        </button>
+<button class="flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-background-dark font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+<span class="material-symbols-outlined">share</span>
+                            Share Results
+                        </button>
+</div>
+</div>
+<!-- Cartoon Podium Section -->
+<div class="relative w-full mb-20 podium-gradient rounded-xl pt-16 pb-12 overflow-hidden border border-primary/5">
+<div class="flex flex-col md:flex-row items-end justify-center gap-4 md:gap-0">
+<!-- 2nd Place -->
+<div class="flex flex-col items-center w-full md:w-64 order-2 md:order-1">
+<div class="mb-4 relative">
+<div class="w-24 h-24 rounded-full border-4 border-slate-300 p-1 bg-white">
+<img alt="Rank 2" class="w-full h-full rounded-full object-cover" data-alt="Avatar of second place winner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbe1AlHFS6DYQdKtRN4XHd67gRz1XCUyEASfGxL4RDpxTMyJSEwfg5-VyTOrH01xPflYDWO1XLjztBmO7fI2waObXwysMbWZUUYgh1Fr5sGP-MvWQuxZpnCor-l97hd4u8yu_dxd4gGVIb0Z6CRAU90nxaqFyyy5XSKcxjCvfzRw3DVHkIfE9RH_1GNfh_qcZh9S3Q9qkYjELzyEEzgcaot-iBHhmoZrFyh4qPNPRkt0iqd27AuuzhFvrf7IhBzJWLaTK8Cps_2eYa"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-slate-300 text-slate-800 rounded-full w-8 h-8 flex items-center justify-center font-bold border-2 border-white">2</div>
+</div>
+<div class="text-center mb-4">
+<p class="font-bold text-lg">Hoang Pham</p>
+<p class="text-primary font-semibold text-sm">48 Provinces</p>
+</div>
+<div class="w-full h-32 bg-slate-200 dark:bg-slate-800 rounded-t-xl flex flex-col items-center justify-center border-x border-t border-slate-300/30">
+<span class="material-symbols-outlined text-slate-400 text-4xl mb-1">emoji_events</span>
+<span class="text-slate-500 font-bold uppercase text-xs">Silver</span>
+</div>
+</div>
+<!-- 1st Place -->
+<div class="flex flex-col items-center w-full md:w-72 z-10 order-1 md:order-2">
+<div class="mb-6 relative">
+<div class="w-32 h-32 rounded-full border-4 border-primary p-1 bg-white shadow-2xl shadow-primary/40">
+<img alt="Rank 1" class="w-full h-full rounded-full object-cover" data-alt="Avatar of first place winner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGOKFWpCrwDeu9bgnSE_SFdLzcj1E07MQD7kDWV_34Hu0bivXyJOHC2yNx7rLUTGELENEps1Bj9F08y1HQKmKXEHjiioikhDjW-WWaKsBRJ1xaSunwgKYOSlQVaOns7aFwC79u3DIKICZPzOnyZuf0exe9Xtova052BDdb6KKLERRjRgDQ2npO4k6ZtMacRro_Lly4RFhUkPqyjVVQczw3AItE1Al8BWk6arVkkTxaUOA3AJzDk8bi4XOKSKpZQSlDW0-lkMprrwfo"/>
+</div>
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 text-primary">
+<span class="material-symbols-outlined text-5xl">rewarded_ads</span>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary text-background-dark rounded-full w-10 h-10 flex items-center justify-center font-black text-xl border-4 border-white">1</div>
+</div>
+<div class="text-center mb-4">
+<p class="font-black text-2xl">Minh Nguyen</p>
+<p class="text-primary font-bold text-lg">61 Provinces</p>
+<div class="flex gap-1 justify-center mt-2">
+<span class="material-symbols-outlined text-primary text-sm">stars</span>
+<span class="material-symbols-outlined text-primary text-sm">stars</span>
+<span class="material-symbols-outlined text-primary text-sm">stars</span>
+</div>
+</div>
+<div class="w-full h-48 bg-primary rounded-t-xl flex flex-col items-center justify-center border-x border-t border-primary/50 shadow-lg">
+<span class="material-symbols-outlined text-white text-6xl mb-2 drop-shadow-md">military_tech</span>
+<span class="text-background-dark font-black uppercase tracking-widest">Grand Explorer</span>
+</div>
+</div>
+<!-- 3rd Place -->
+<div class="flex flex-col items-center w-full md:w-64 order-3 md:order-3">
+<div class="mb-4 relative">
+<div class="w-24 h-24 rounded-full border-4 border-orange-400 p-1 bg-white">
+<img alt="Rank 3" class="w-full h-full rounded-full object-cover" data-alt="Avatar of third place winner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApKLFtvwbh1wuX9xMo_jEKP_c-mzcfpzVFVFYs59rjpFhyEarnOtHdlxQ_R-ReUL3jaEmbrkRcKVLY6Cc6-kx18KQP-Pu2cfJmeF5s0082KZ5FuXhFcH82Ka9m11X07QoHbEuyE0h1njz4nNLI5brwMXV_XGbyE3CWqdhrqUDzduTyOVcROCz2ASQXi0QgAd9jJdkyw-Ho7UpIJY8N-0xVtFYvNXEm2OaGmjDFsncgvmsD_Qh4B7g18ObEQOKzVlfE07MgrTXcyiJH"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-orange-400 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold border-2 border-white">3</div>
+</div>
+<div class="text-center mb-4">
+<p class="font-bold text-lg">Lan Tran</p>
+<p class="text-primary font-semibold text-sm">42 Provinces</p>
+</div>
+<div class="w-full h-24 bg-orange-100 dark:bg-orange-900/20 rounded-t-xl flex flex-col items-center justify-center border-x border-t border-orange-400/30">
+<span class="material-symbols-outlined text-orange-400 text-4xl mb-1">emoji_events</span>
+<span class="text-orange-500 font-bold uppercase text-xs">Bronze</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Rankings Table -->
+<div class="bg-white dark:bg-slate-900/50 rounded-xl border border-primary/10 overflow-hidden shadow-sm">
+<div class="px-6 py-4 border-b border-primary/10 flex justify-between items-center">
+<h3 class="font-bold text-xl">Full Rankings</h3>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-primary/10 rounded-lg text-slate-500"><span class="material-symbols-outlined">filter_list</span></button>
+<button class="p-2 hover:bg-primary/10 rounded-lg text-slate-500"><span class="material-symbols-outlined">file_download</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-primary/5 text-slate-500 text-sm uppercase font-bold tracking-wider">
+<th class="px-6 py-4">Rank</th>
+<th class="px-6 py-4">Explorer</th>
+<th class="px-6 py-4">Provinces</th>
+<th class="px-6 py-4">Points</th>
+<th class="px-6 py-4">Badges</th>
+<th class="px-6 py-4 text-right">Profile</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/5">
+<!-- Row 4 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 font-bold text-slate-400">#4</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img alt="Alex" class="w-10 h-10 rounded-full" data-alt="Avatar for rank 4 explorer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7CK8Ah2F9a69qLEy4bkMv97-jHRspHMmzHrvfin9PHqluGyp6KO9-JaeafoXPzwQg-o6ZjBMHeaZvaUUR4cSkLbOQHYIdpfQrHVZ4NV0kEtL11NrQiRaNcfeHVdRAaMCt1TPSfUIqXmead2nDTkgUbOghAH-ZXqZOduTRg-9I71sxDQTYFtCOy2h5xS5kbEHfDxLt87vZo3SmzR3DRIx-tQEt6YRKUDoqcdkLtCKhOtc4d1wkpVGr21vL8pT-8RuIJ5Cgik6NsU4H"/>
+<div>
+<p class="font-bold text-slate-800 dark:text-slate-200">Alex Dang</p>
+<p class="text-xs text-slate-500">Member since 2023</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-semibold">39</td>
+<td class="px-6 py-4 text-primary font-bold">12,450</td>
+<td class="px-6 py-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-sm bg-orange-100 text-orange-600 p-1 rounded-full" title="Mountain Climber">landscape</span>
+<span class="material-symbols-outlined text-sm bg-blue-100 text-blue-600 p-1 rounded-full" title="Sea Lover">water_drop</span>
+<span class="material-symbols-outlined text-sm bg-purple-100 text-purple-600 p-1 rounded-full" title="City Expert">location_city</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:underline font-bold text-sm">View Profile</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 font-bold text-slate-400">#5</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img alt="Tu" class="w-10 h-10 rounded-full" data-alt="Avatar for rank 5 explorer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgjGRowkBeTRm-7Z2CG8K3_3gNtcpDBTLHLBA-Bsdvp619pYiUkDHZDMEUWekX-UixSZTfpk8WrcCABhGMxqbm9s4QqHDi0ot3EXC4lwvgLZtagG5soL7UH4-bVZTdv6Y3CDPpHiM2L2_I3X3a9nfVa6E4eACCOe2aublWnHZ9P9NPmkYmurYXaVgUh2AcltuBqvo5sLRZWAfe5YheALoEbLhhsvT89cL0T2WnWqqwEinnf2DjflKMm1kpuB9Z6Bg3gJtkgBCmuitr"/>
+<div>
+<p class="font-bold text-slate-800 dark:text-slate-200">Tu Nguyen</p>
+<p class="text-xs text-slate-500">Member since 2022</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-semibold">37</td>
+<td class="px-6 py-4 text-primary font-bold">11,900</td>
+<td class="px-6 py-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-sm bg-green-100 text-green-600 p-1 rounded-full" title="Eco Friendly">eco</span>
+<span class="material-symbols-outlined text-sm bg-yellow-100 text-yellow-600 p-1 rounded-full" title="Sun Seeker">light_mode</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:underline font-bold text-sm">View Profile</button>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 font-bold text-slate-400">#6</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img alt="Vy" class="w-10 h-10 rounded-full" data-alt="Avatar for rank 6 explorer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApFNS2qr779SzpvDGDVjXOv5tzXv0Ovk7cqf_sf_88E4uGOtkcTyYuM206O6R0yPRthGJGqV1MbDnd0BW0usSgx_NsGjTb9apFjWCubdvyRo3EztKLg_4EZf6LppXZMm7rYb_3JarRW4mQb2FtT7vP5J1l7LxcGJttfkyZW6LquJe7nq55bxX_vk2IaJedxS9Iirlx1YZDQ4IoHDo1nFpEFEE1X5-xE-VvT8er_jKj-cd_RxfWUlJqTyyoystL-UG1GmU4buYJleuD"/>
+<div>
+<p class="font-bold text-slate-800 dark:text-slate-200">Vy Le</p>
+<p class="text-xs text-slate-500">Member since 2024</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-semibold">35</td>
+<td class="px-6 py-4 text-primary font-bold">10,200</td>
+<td class="px-6 py-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-sm bg-red-100 text-red-600 p-1 rounded-full" title="Foodie">restaurant</span>
+<span class="material-symbols-outlined text-sm bg-indigo-100 text-indigo-600 p-1 rounded-full" title="Historian">history_edu</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:underline font-bold text-sm">View Profile</button>
+</td>
+</tr>
+<!-- Row 7 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 font-bold text-slate-400">#7</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img alt="Son" class="w-10 h-10 rounded-full" data-alt="Avatar for rank 7 explorer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9TCLn5aVrg2HYsLCCC_u06j1FJ2GxB8pPALsVd6Ct2KvQg4igMsRWXG92rN74rbQnebgovQq1obbpu0O6gTqsKrumIbLT1cTR80pOwLCfXyZ47wBxNXUpDWSP2V1Q34HjqZyhLe8veWAN2ZuefpF-ukbs2nrGs2KTGuyvgcNRWVh762muFefxqPmHBJtcRwTFOxVHHSjyTvZ9oMzKlb_OQusizczAgabqZXXXnNEbzoyN0PbAtYJedRw3IxbNX83YLy5f9js7qx5l"/>
+<div>
+<p class="font-bold text-slate-800 dark:text-slate-200">Son Trinh</p>
+<p class="text-xs text-slate-500">Member since 2023</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-semibold">32</td>
+<td class="px-6 py-4 text-primary font-bold">9,850</td>
+<td class="px-6 py-4">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-sm bg-blue-100 text-blue-600 p-1 rounded-full">camera</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:underline font-bold text-sm">View Profile</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-6 border-t border-primary/10 flex justify-center">
+<button class="px-8 py-3 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-background-dark transition-all">
+                            Load More Rankings
+                        </button>
+</div>
+</div>
+<!-- Footer Summary Info -->
+<div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-primary/5 p-6 rounded-xl border border-primary/10 flex items-center gap-4">
+<div class="size-12 bg-primary rounded-full flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined font-bold">public</span>
+</div>
+<div>
+<p class="text-2xl font-black">63</p>
+<p class="text-slate-500 text-sm font-medium">Provinces Covered</p>
+</div>
+</div>
+<div class="bg-primary/5 p-6 rounded-xl border border-primary/10 flex items-center gap-4">
+<div class="size-12 bg-primary/20 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined font-bold">groups</span>
+</div>
+<div>
+<p class="text-2xl font-black">12.5k</p>
+<p class="text-slate-500 text-sm font-medium">Active Explorers</p>
+</div>
+</div>
+<div class="bg-primary/5 p-6 rounded-xl border border-primary/10 flex items-center gap-4">
+<div class="size-12 bg-primary/20 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined font-bold">pin_drop</span>
+</div>
+<div>
+<p class="text-2xl font-black">450k+</p>
+<p class="text-slate-500 text-sm font-medium">Total Check-ins</p>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-12 py-10 border-t border-primary/10 px-10">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-3 text-primary opacity-60">
+<span class="material-symbols-outlined font-bold">explore</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold">CheckViet</h2>
+</div>
+<p class="text-slate-500 text-sm">© 2024 CheckViet. Explore every corner of Vietnam.</p>
+<div class="flex gap-6">
+<a class="text-slate-500 hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-slate-500 hover:text-primary transition-colors" href="#">Terms</a>
+<a class="text-slate-500 hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

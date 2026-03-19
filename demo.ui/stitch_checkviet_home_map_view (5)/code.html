@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CheckViet - Explore Da Nang</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee7c",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102218",
+                        "accent-blue": "#00d4ff",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 px-6 lg:px-20 py-4">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-12">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-4xl font-bold">flag</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-2xl font-extrabold tracking-tight">CheckViet</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary font-semibold transition-colors" href="#">Provinces</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary font-semibold transition-colors" href="#">Check-ins</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary font-semibold transition-colors" href="#">Rewards</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary font-semibold transition-colors" href="#">Community</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center bg-primary/10 rounded-full px-4 py-2 border border-primary/20">
+<span class="material-symbols-outlined text-primary mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 placeholder:text-slate-400" placeholder="Search destinations..." type="text"/>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-background-dark px-6 py-2.5 rounded-full font-bold transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">person</span>
+                        Profile
+                    </button>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto w-full px-6 lg:px-20 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="lg:col-span-8 flex flex-col gap-10">
+<section class="relative group">
+<div class="relative h-[450px] w-full rounded-xl overflow-hidden shadow-2xl">
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10"></div>
+<img alt="Da Nang Hero Image" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Cartoon illustration of Dragon Bridge in Da Nang with blue sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo_45-WezPdTw4DVte2EhJb5U_WO9iQJ9N0tKPt-swXW0s2N9eMIAzMJgBFTAxQ7qXchfMgkkxwjSthi8_REYruVkI7Iuqlbfi7deYjDRJifcu4YqxJj92ODj5Zkoj_VvihFYu7hPGyrW4HPCDmLG3P76l0y1glqXBxgz-AUzED936UrQSbp9WTYHbv2SQ4sqp6O3EnkimI_0uj4hosR8azZw8rCZbDUkR6H3fCWDaugtqtPLXUG6jntnuRQly0WQjl2zVdrOcmane"/>
+<div class="absolute bottom-0 left-0 z-20 p-10 w-full flex justify-between items-end">
+<div class="max-w-xl">
+<span class="inline-block bg-accent-blue/90 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">Vietnam's Coastal Gem</span>
+<h1 class="text-white text-5xl lg:text-7xl font-black leading-tight mb-4 drop-shadow-md">
+                                    Explore <span class="text-primary italic">Da Nang</span>
+</h1>
+<p class="text-slate-100 text-lg font-medium opacity-90">
+                                    Discover the City of Bridges, mythical mountains, and endless golden beaches in a whimsical journey.
+                                </p>
+</div>
+<button class="hidden md:flex bg-primary hover:scale-105 text-background-dark px-10 py-5 rounded-full font-extrabold text-xl transition-all shadow-xl shadow-primary/40 flex items-center gap-3">
+<span class="material-symbols-outlined text-3xl">location_on</span>
+                                Check-in Now
+                            </button>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center justify-between mb-8">
+<div>
+<h2 class="text-3xl font-extrabold flex items-center gap-3">
+<span class="material-symbols-outlined text-accent-blue text-4xl">map</span>
+                                Iconic Landmarks
+                            </h2>
+<p class="text-slate-500 dark:text-slate-400 mt-1">Must-visit spots during your trip to Da Nang</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-full border border-primary/20 hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-2 rounded-full border border-primary/20 hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex overflow-x-auto gap-6 no-scrollbar pb-4 -mx-2 px-2">
+<div class="flex-none w-[320px] bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all group">
+<div class="h-48 rounded-lg overflow-hidden mb-4">
+<img alt="Golden Bridge" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Golden Bridge held by giant stone hands in Ba Na Hills" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPZIDcZVzPO8thG50HnOaozcokfuWWVBBFKS1fEoZvhdm2sZejN9l5G1S8qOs7JtLl5XhJsUsjoyuAUuN6aQJCddyA-phv3uKlihx9JSujWYtaU61lbFdCqHI-3XWTdiK9p8PUdW8NeXonNSAC4KT95i_sH3O4wWsz-tMhJMBnO1EP_7K8qUeyJd2L1D5x7CiXU_LAR_nJC2RUv8K9SoPYJHGFHImmunhcn2FNFEKYyCIjqUBy92PUxgdR0wOkd9B7cyyMqma1ynpR"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-xl font-bold mb-1">Golden Bridge</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">location_on</span> Ba Na Hills
+                                    </p>
+</div>
+<span class="bg-primary/20 text-primary-dark font-bold text-xs px-2 py-1 rounded">4.9 ★</span>
+</div>
+</div>
+<div class="flex-none w-[320px] bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all group">
+<div class="h-48 rounded-lg overflow-hidden mb-4">
+<img alt="My Khe Beach" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="My Khe Beach with white sand and blue water" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzIiPPfpi8lyP3oaTi46ByIG4qvxBf-4NwJdAGzx-AiO99UJNMypvl75ZUZYZ1338EwxFHFwc2pL-wz-sQ59a9PcHIeSQYTpXByEurAZgYepoIWKRgoAPN93WEoNgbVDkgkbyJXfUmK9kbGlzx6YjxfWEbD8eeAeG0Bvd0Gl7Bqk-Crb2IoS7EFpFKK56F05ASZtMHx5uOR8NcYZ4o-xHQp7XKQuWgEDbc8N0vTGgg4diuOUCSIUfZCt6BNwA9ZJDZKJAPyTLvaS2U"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-xl font-bold mb-1">My Khe Beach</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">beach_access</span> Coastal District
+                                    </p>
+</div>
+<span class="bg-primary/20 text-primary-dark font-bold text-xs px-2 py-1 rounded">4.8 ★</span>
+</div>
+</div>
+<div class="flex-none w-[320px] bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all group">
+<div class="h-48 rounded-lg overflow-hidden mb-4">
+<img alt="Dragon Bridge" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Dragon Bridge breathing fire at night" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKVHv-la5Zq8YsHz-NZ3F889sargA8ueY2BapZi9psqDIACccnEhWlfRm3FmTPFJX-iWSNtGZJdRI3J3i3Gsp-Kw1_auOlaUUGsVlW4c5fjeOqTGRV6X8GVUpC9d8N61QRY3Ck458gy7mjSuZNCnRFT4_OHQdyeTbF0NEVqJZIIpHcTgFj6pxZ_NLBXofhebkSaUCZYWkpIuS58_U6GetryCHn6OeOTO0E5QLAVxQjq2w-kizeCvRVAVj7N0OTThrtN2o5lMFXcigH"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-xl font-bold mb-1">Dragon Bridge</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">link</span> Han River
+                                    </p>
+</div>
+<span class="bg-primary/20 text-primary-dark font-bold text-xs px-2 py-1 rounded">4.7 ★</span>
+</div>
+</div>
+</div>
+</section>
+<section class="bg-primary/5 rounded-xl p-8 border-2 border-dashed border-primary/20">
+<div class="flex flex-col md:flex-row items-center gap-8">
+<div class="flex-1">
+<h2 class="text-3xl font-black mb-4">Start Your Quest!</h2>
+<p class="text-slate-600 dark:text-slate-400 text-lg mb-6 leading-relaxed">
+                                Ready to document your journey? Check-in at 5 landmarks in Da Nang to earn the <span class="text-primary font-bold">"Coastal Explorer"</span> badge and 500 CheckViet points!
+                            </p>
+<button class="bg-primary text-background-dark px-8 py-4 rounded-full font-bold shadow-lg shadow-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+                                Scan QR at Location
+                            </button>
+</div>
+<div class="w-full md:w-64 aspect-square bg-white dark:bg-slate-800 rounded-lg p-6 flex flex-col items-center justify-center shadow-inner">
+<div class="w-32 h-32 bg-primary/20 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-6xl text-primary font-bold">military_tech</span>
+</div>
+<p class="text-center text-xs font-bold uppercase text-slate-400">Next Reward</p>
+<p class="text-center font-bold">Explorer Badge</p>
+</div>
+</div>
+</section>
+</div>
+<aside class="lg:col-span-4 flex flex-col gap-8">
+<div class="bg-white dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 rounded-xl p-6 shadow-sm sticky top-32">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">dynamic_feed</span>
+</div>
+<div>
+<h3 class="text-xl font-bold">Live Check-ins</h3>
+<p class="text-slate-500 text-sm">Real-time social feed</p>
+</div>
+</div>
+<div class="flex flex-col gap-6">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary">
+<img alt="User 1" class="w-full h-full object-cover" data-alt="User profile avatar 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpEcafCA3uYxSNJz2rNzHiBpjKQS8ImiLuyrAXTSf7keZdQ3G1Aupd8kixcN0_Y4zhECo_vPtBWF_p0lb3_tMUnoadDjO7W3CYlSiaS2gQ3dWqSVY3kBZAypm3TIRvX6HhLOtHS2taVlOWDqxzrWcc9WhXTMdV_xAmOkYfXi_RZx0Lo1Nk_O6l9ra67mrgA3Ur6ejgVy9Er--oDx_hcTzt_L1XveYVVa1Bam6C8mZ_2WkqpDm08AKHbmIB4LstNIzg7oNUYthUlAMb"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<p class="font-bold text-sm">Minh Anh</p>
+<span class="text-[10px] text-slate-400">2 mins ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400 mt-1">"The sunrise at My Khe is absolutely breathtaking! 😍"</p>
+<div class="mt-2 h-32 rounded-lg overflow-hidden">
+<img alt="User check-in photo" class="w-full h-full object-cover" data-alt="Sunrise view over the beach" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATiC25410_HNrL38ephyaKXTveeAFeARV8GYfCrofTxwDKL_qcktGejk8G5dTZHN7EnjqABYCvhrvTqaGz-M9eMSLwaNG9t6N_EYTDVBUfhmNhW7YecuNOp8jTIWfy4JmAuTfBkaJaaccV2tP7rlRwZ05r-WbGXEl-6sujOsFMsaj7pKEG8SUirT5NWqiSbUCkdVHQayjL6VccF2897PEPuK4-ElIB99pT0XIND-_0UTlyo4dEZeYRytmCrUiWIoTkT2HFssh502FC"/>
+</div>
+<div class="flex gap-3 mt-3">
+<button class="flex items-center gap-1 text-[10px] font-bold text-slate-400"><span class="material-symbols-outlined text-sm">favorite</span> 42</button>
+<button class="flex items-center gap-1 text-[10px] font-bold text-slate-400"><span class="material-symbols-outlined text-sm">chat_bubble</span> 5</button>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-accent-blue">
+<img alt="User 2" class="w-full h-full object-cover" data-alt="User profile avatar 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMWhMGbP0a1GuWOfiJVDQrvupJZVL9XWqEuYpEdcAdTiNCBATiIJofpQssFoVMtUjHOlxsxMDOn6xUueGcLxU9Z9YM3QqnB4Sqdc2jAEUh4Nq-5Fb9G9LknzJQjFW6gaXxQsNCQPlKyGuSUYL27syHiIBjYi2f-zO6r25r7b00xYKKnqwVbijEXlNYwMRhJzN3gFBIQGhuL5Y36RfxEfUZjYnCFyLGOWhMZcZ0-g2_NOAb4wI-FBWNkkg9DVxGol-XlbJ7zHpWRqAc"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<p class="font-bold text-sm">Alex Tran</p>
+<span class="text-[10px] text-slate-400">15 mins ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Checked in at <span class="text-accent-blue font-bold">Marble Mountains</span>. The caves are cooler than I expected!</p>
+<div class="flex gap-3 mt-3">
+<button class="flex items-center gap-1 text-[10px] font-bold text-slate-400"><span class="material-symbols-outlined text-sm">favorite</span> 12</button>
+<button class="flex items-center gap-1 text-[10px] font-bold text-slate-400"><span class="material-symbols-outlined text-sm">chat_bubble</span> 2</button>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary">
+<img alt="User 3" class="w-full h-full object-cover" data-alt="User profile avatar 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKZZmsSNOwTzeI4V0VIXnVMrItPQFRsDNFpMz61hYpceSCBEEF_ZNN7Y__4IhRNSo4s1xkpAl54leFEUO9kY8CFvFS_M224tRHIj0FjhSiNDv74RZ5yGEOYN0aGTAK1kyzSbtpF4mLRyzGFEjqXgP1KPqJoIxLnHnVLGPMcgt8A1ruZpKcMjA4kjO1cO5JGM-XGXUvT0c0DFSeF1LVK0kybXSD2cjuYjMg3mfXfEwlYriyj2ieHwWJbY_7kWyI__QSvZOa1QCuFJ7C"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<p class="font-bold text-sm">Hương Nguyễn</p>
+<span class="text-[10px] text-slate-400">45 mins ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Just earned the 'Beach Bum' badge! 🏖️🏆</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-8 py-3 rounded-xl border-2 border-primary/20 text-primary font-bold text-sm hover:bg-primary/5 transition-all">
+                        View All Activity
+                    </button>
+</div>
+<div class="bg-background-dark dark:bg-slate-900 rounded-xl p-6 text-white overflow-hidden relative group">
+<div class="absolute -right-4 -bottom-4 w-32 h-32 bg-primary/20 rounded-full blur-2xl group-hover:bg-primary/30 transition-all"></div>
+<div class="relative z-10">
+<h4 class="text-lg font-bold mb-2">Weather in Da Nang</h4>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-5xl text-primary">sunny</span>
+<div>
+<p class="text-3xl font-black">29°C</p>
+<p class="text-slate-400 text-sm">Mostly Sunny</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<footer class="bg-white dark:bg-background-dark border-t border-primary/10 py-12 px-6 lg:px-20 mt-20">
+<div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl font-bold">flag</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-extrabold tracking-tight">CheckViet</h2>
+</div>
+<div class="flex gap-8 text-sm font-medium text-slate-500">
+<a class="hover:text-primary transition-colors" href="#">About Us</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+<div class="flex gap-4">
+<button class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+<p class="text-center text-slate-400 text-xs mt-8">© 2024 CheckViet. Explore Vietnam, one check-in at a time.</p>
+</footer>
+</div>
+</body></html>
