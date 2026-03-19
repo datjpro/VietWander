@@ -1,79 +1,19 @@
 ﻿import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { vietnamProvinces } from '../lib/vietnam-provinces.js';
-
-const viewBox = { width: 520, height: 860 };
-const mapBounds = {
-  minLat: 8.5,
-  maxLat: 23.4,
-  minLng: 102.1,
-  maxLng: 109.5
-};
-const regionOrder = ['Bắc Bộ', 'Đồng bằng Bắc Bộ', 'Bắc Trung Bộ', 'Nam Trung Bộ', 'Tây Nguyên', 'Đông Nam Bộ', 'Tây Nam Bộ'];
-const provinceReference = new Map(vietnamProvinces.map((province) => [province.id, province]));
-
-function mergeProvince(sourceProvince = {}) {
-  const fallback = provinceReference.get(sourceProvince.id) || {};
-  return {
-    ...fallback,
-    ...sourceProvince,
-    location: sourceProvince.location || fallback.location || sourceProvince.landmarks?.[0] || fallback.landmarks?.[0] || null,
-    landmarks: sourceProvince.landmarks?.length ? sourceProvince.landmarks : fallback.landmarks || [],
-    popularTags: sourceProvince.popularTags?.length ? sourceProvince.popularTags : fallback.popularTags || [],
-    region: sourceProvince.region || fallback.region || 'Bắc Bộ',
-    themeColor: sourceProvince.themeColor || fallback.themeColor || '#2bee7c',
-    cartoonIcon: sourceProvince.cartoonIcon || fallback.cartoonIcon || '📍'
-  };
-}
-
-function projectLocation(point, index = 0) {
-  if (!point) {
-    return { x: 230 + (index % 2) * 24, y: 110 + index * 18 };
-  }
-
-  const lngRatio = (point.lng - mapBounds.minLng) / (mapBounds.maxLng - mapBounds.minLng);
-  const latRatio = (mapBounds.maxLat - point.lat) / (mapBounds.maxLat - mapBounds.minLat);
-  const coastalWave = Math.sin(latRatio * Math.PI * 1.25) * 14;
-
-  return {
-    x: 156 + lngRatio * 186 + coastalWave,
-    y: 72 + latRatio * 700
-  };
-}
-
-function buildItineraryPoints(provinces) {
-  return provinces
-    .map((province, index) => projectLocation(province.location, index))
-    .map((point) => `${point.x},${point.y}`)
-    .join(' ');
-}
-
-function getMarkerIcon(province, index) {
-  if (province?.region?.includes('Trung')) return 'temple_buddhist';
-  if (province?.region?.includes('Nam')) return 'restaurant';
-  return index % 2 === 0 ? 'landscape' : 'castle';
-}
+import {
+  VIETNAM_MAP_VIEWBOX,
+  buildGoogleMapsSearchUrl,
+  buildItineraryPoints,
+  decorateProvinces,
+  getMarkerIcon,
+  getShowcaseProvinces,
+  projectLocation,
+  vietnamMapRegionOrder
+} from '../lib/province-map-data.js';
 
 export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [], variant = 'default' }) {
   const navigate = useNavigate();
-  const decoratedProvinces = useMemo(() => {
-    const merged = provinces.map(mergeProvince);
-    const missing = vietnamProvinces.filter((province) => !merged.some((item) => item.id === province.id));
-    const nextItems = provinces.length >= 20 ? merged : [...merged, ...missing];
-
-    return nextItems
-      .map(mergeProvince)
-      .sort((left, right) => {
-        const leftLat = left.location?.lat ?? 0;
-        const rightLat = right.location?.lat ?? 0;
-
-        if (rightLat !== leftLat) {
-          return rightLat - leftLat;
-        }
-
-        return (left.location?.lng ?? 0) - (right.location?.lng ?? 0);
-      });
-  }, [provinces]);
+  const decoratedProvinces = useMemo(() => decorateProvinces(provinces), [provinces]);
   const [selectedProvinceId, setSelectedProvinceId] = useState(activeProvinceId || 'da-nang');
 
   useEffect(() => {
@@ -101,22 +41,28 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
       summary.set(province.region, current);
     });
 
-    return regionOrder.map((region) => summary.get(region)).filter(Boolean);
+    return vietnamMapRegionOrder.map((region) => summary.get(region)).filter(Boolean);
   }, [decoratedProvinces]);
   const itineraryPoints = useMemo(() => buildItineraryPoints(decoratedProvinces), [decoratedProvinces]);
   const landmarkCount = useMemo(
     () => decoratedProvinces.reduce((total, province) => total + (province.landmarks?.length || 0), 0),
     [decoratedProvinces]
   );
-  const showcaseMarkers = useMemo(() => {
-    const picks = [decoratedProvinces[2], focusedProvince, decoratedProvinces[Math.max(0, decoratedProvinces.length - 3)]].filter(Boolean);
-    return picks.filter((province, index, items) => items.findIndex((item) => item.id === province.id) === index);
-  }, [decoratedProvinces, focusedProvince]);
+  const showcaseMarkers = useMemo(() => getShowcaseProvinces(decoratedProvinces, focusedProvince), [decoratedProvinces, focusedProvince]);
   const previewImage = focusedProvince?.imageUrl || posts[0]?.photoUrl || posts[0]?.imageUrl;
   const mediaCount = Math.max(posts.length, focusedProvince?.landmarks?.length || 4) * 32;
+  const mapsUrl = useMemo(
+    () => buildGoogleMapsSearchUrl(focusedProvince?.location, focusedProvince?.fullName || focusedProvince?.name),
+    [focusedProvince]
+  );
 
   const mapSvg = (
-    <svg className={`vietnam-map${variant === 'showcase' ? ' showcase-map-svg' : ''}`} viewBox={`0 0 ${viewBox.width} ${viewBox.height}`} role="img" aria-label="Bản đồ Việt Nam hoạt họa đầy đủ">
+    <svg
+      className={`vietnam-map${variant === 'showcase' ? ' showcase-map-svg' : ''}`}
+      viewBox={`0 0 ${VIETNAM_MAP_VIEWBOX.width} ${VIETNAM_MAP_VIEWBOX.height}`}
+      role="img"
+      aria-label="Bản đồ Việt Nam hoạt họa đầy đủ"
+    >
       <defs>
         <linearGradient id="mapSeaGradient" x1="0" x2="1" y1="0" y2="1">
           <stop offset="0%" stopColor="#eef8ff" />
@@ -131,7 +77,7 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
         </filter>
       </defs>
 
-      <rect className="map-sea" width={viewBox.width} height={viewBox.height} rx="36" />
+      <rect className="map-sea" width={VIETNAM_MAP_VIEWBOX.width} height={VIETNAM_MAP_VIEWBOX.height} rx="36" />
       <ellipse className="map-cloud" cx="108" cy="118" rx="64" ry="28" />
       <ellipse className="map-cloud" cx="402" cy="176" rx="52" ry="24" />
       <ellipse className="map-cloud" cx="396" cy="732" rx="72" ry="30" />
@@ -206,7 +152,7 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
                 className={`showcase-marker${focusedProvince?.id === province.id ? ' is-active' : ''}`}
                 key={province.id}
                 onClick={() => setSelectedProvinceId(province.id)}
-                style={{ left: `${(point.x / viewBox.width) * 100}%`, top: `${(point.y / viewBox.height) * 100}%` }}
+                style={{ left: `${(point.x / VIETNAM_MAP_VIEWBOX.width) * 100}%`, top: `${(point.y / VIETNAM_MAP_VIEWBOX.height) * 100}%` }}
                 type="button"
               >
                 <span className="material-symbols-outlined">{getMarkerIcon(province, index)}</span>
@@ -258,7 +204,7 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
     <div className="map-card">
       <div className="map-story-panel">
         <div className="map-card-copy">
-          <p className="eyebrow">Cartoon atlas · provinces API</p>
+          <p className="eyebrow">Cartoon atlas · live province data</p>
           <h2>Bản đồ Việt Nam hoạt họa đầy đủ theo bộ dữ liệu hiện hành</h2>
           <p className="muted-copy">
             Component lấy danh sách từ <code>/api/provinces</code>, tự bù metadata còn thiếu và dựng lại thành bản đồ Việt Nam theo
@@ -312,13 +258,15 @@ export function ProvinceMap({ provinces = [], activeProvinceId = '', posts = [],
                 </span>
               ))}
             </div>
-            <div className="hero-actions">
+            <div className="hero-actions wrap-row">
               <button className="button primary-button" onClick={() => navigate(`/province/${focusedProvince.id}`)} type="button">
                 Xem chi tiết tỉnh
               </button>
-              <button className="button ghost-button" onClick={() => setSelectedProvinceId('ha-noi')} type="button">
-                Về điểm bắt đầu
-              </button>
+              {mapsUrl ? (
+                <a className="button ghost-button" href={mapsUrl} rel="noreferrer" target="_blank">
+                  Mở trên Google Maps
+                </a>
+              ) : null}
             </div>
           </article>
         ) : null}

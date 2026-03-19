@@ -44,6 +44,7 @@ export const firebaseApp = firebaseEnabled
 
 export const auth = firebaseApp ? getAuth(firebaseApp) : null;
 export const storage = firebaseApp ? getStorage(firebaseApp) : null;
+export const canUploadCheckinImages = Boolean(storage);
 
 if (auth) {
   setPersistence(auth, browserLocalPersistence).catch(() => undefined);

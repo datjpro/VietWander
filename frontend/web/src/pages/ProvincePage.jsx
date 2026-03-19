@@ -5,6 +5,7 @@ import { ProvinceMap } from '../components/ProvinceMap.jsx';
 import { useAsyncData } from '../hooks/useAsyncData.js';
 import { getProvince, getProvincePosts, getProvinces } from '../lib/api.js';
 import { demoPosts, demoProvinces } from '../lib/demo-data.js';
+import { buildGoogleMapsSearchUrl } from '../lib/province-map-data.js';
 
 export function ProvincePage() {
   const { provinceId = '' } = useParams();
@@ -33,6 +34,7 @@ export function ProvincePage() {
   );
 
   const province = data.province;
+  const mapsUrl = buildGoogleMapsSearchUrl(province.location, province.fullName || province.name);
 
   return (
     <div className="page-section-stack">
@@ -42,13 +44,19 @@ export function ProvincePage() {
           <span className="pill dark-pill">{province.code}</span>
           <h1>{province.fullName || province.name}</h1>
           <p>{province.description}</p>
-          <div className="hero-actions">
+          <div className="hero-actions wrap-row">
             <Link className="button primary-button" to="/checkin">
               Check-in tại đây
             </Link>
-            <Link className="button ghost-button" to="/feed">
-              Xem feed chung
-            </Link>
+            {mapsUrl ? (
+              <a className="button ghost-button" href={mapsUrl} rel="noreferrer" target="_blank">
+                Mở trên Google Maps
+              </a>
+            ) : (
+              <Link className="button ghost-button" to="/feed">
+                Xem feed chung
+              </Link>
+            )}
           </div>
         </div>
       </section>

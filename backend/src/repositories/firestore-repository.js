@@ -2,7 +2,7 @@
 import { GeoPoint } from 'firebase-admin/firestore';
 import { getFirestoreAdmin } from '../config/firebase-admin.js';
 import { seedCheckins, seedPosts, seedProvinces, seedUsers } from '../data/seed.js';
-import { serializeValue, withDocumentId } from '../lib/serialization.js';
+import { withDocumentId } from '../lib/serialization.js';
 
 function normalizeWritePayload(payload) {
   const nextPayload = { ...payload };
@@ -14,7 +14,7 @@ function normalizeWritePayload(payload) {
   return nextPayload;
 }
 
-async function snapshotToArray(snapshot) {
+function snapshotToArray(snapshot) {
   return snapshot.docs.map((item) => withDocumentId(item.id, item.data()));
 }
 
@@ -23,6 +23,26 @@ export function createFirestoreRepository() {
 
   if (!db) {
     throw new Error('Firebase Admin chưa được cấu hình cho backend.');
+  }
+
+  async function clearDemoTravelerContent() {
+    const demoUserId = 'demo-traveler';
+    const checkinsSnapshot = await db.collection('checkins').where('userId', '==', demoUserId).get();
+    const postsSnapshot = await db.collection('posts').where('userId', '==', demoUserId).get();
+
+    for (const doc of checkinsSnapshot.docs) {
+      await doc.ref.delete();
+    }
+
+    for (const doc of postsSnapshot.docs) {
+      const data = doc.data();
+
+      if (data?.provinceId) {
+        await db.collection('provinces').doc(data.provinceId).collection('posts').doc(doc.id).delete().catch(() => undefined);
+      }
+
+      await doc.ref.delete();
+    }
   }
 
   return {
@@ -86,7 +106,7 @@ export function createFirestoreRepository() {
 
       queryRef = queryRef.orderBy('createdAt', 'desc').limit(limit);
       const snapshot = await queryRef.get();
-      let items = await snapshotToArray(snapshot);
+      let items = snapshotToArray(snapshot);
 
       if (userId && provinceId) {
         items = items.filter((item) => item.provinceId === provinceId);
@@ -115,7 +135,7 @@ export function createFirestoreRepository() {
 
       queryRef = queryRef.orderBy('createdAt', 'desc').limit(limit);
       const snapshot = await queryRef.get();
-      let items = await snapshotToArray(snapshot);
+      let items = snapshotToArray(snapshot);
 
       if (provinceId && userId) {
         items = items.filter((item) => item.userId === userId);
@@ -160,6 +180,7 @@ export function createFirestoreRepository() {
 
     async seedDemoData() {
       await this.seedProvinces(seedProvinces, { overwrite: false });
+      await clearDemoTravelerContent();
 
       for (const user of seedUsers) {
         await this.upsertUser(user.id, user);

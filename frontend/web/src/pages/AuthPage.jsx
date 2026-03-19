@@ -11,7 +11,7 @@ const authArt = {
 export function AuthPage({ mode }) {
   const isRegister = mode === 'register';
   const navigate = useNavigate();
-  const { login, register } = useAuth();
+  const { demoModeEnabled, enterGuestMode, exitGuestMode, isGuest, login, register } = useAuth();
 
   const title = isRegister ? 'Tạo tài khoản VietWander' : 'Đăng nhập VietWander';
   const description = isRegister
@@ -39,11 +39,20 @@ export function AuthPage({ mode }) {
     }
   }
 
+  async function handleEnterDemo() {
+    await enterGuestMode();
+    navigate('/');
+  }
+
+  async function handleExitDemo() {
+    await exitGuestMode();
+  }
+
   return (
     <div className="auth-shell">
       <section className="auth-visual-panel">
         <div className="auth-visual-copy">
-          <p className="eyebrow">React Web Experience</p>
+          <p className="eyebrow">Web-first Demo Experience</p>
           <h1>{title}</h1>
           <p>{description}</p>
         </div>
@@ -54,8 +63,20 @@ export function AuthPage({ mode }) {
         <div>
           <p className="brand-script">VietWander</p>
           <h2>{isRegister ? 'Bắt đầu khám phá' : 'Chào mừng quay lại'}</h2>
-          <p className="muted-copy">UI này được viết lại bằng React JS chuẩn, không còn bản static ESM cũ.</p>
+          <p className="muted-copy">Bản demo web hỗ trợ cả tài khoản thật lẫn guest mode để pitch nhanh mà không cần chuẩn bị auth trước.</p>
         </div>
+
+        {demoModeEnabled ? (
+          <div className="auth-demo-banner">
+            <div>
+              <strong>Demo mode đã sẵn sàng</strong>
+              <p className="muted-copy">Vào thẳng flow guest để thử home map, collection và check-in ngay.</p>
+            </div>
+            <button className="button primary-button" onClick={handleEnterDemo} type="button">
+              Vào demo ngay
+            </button>
+          </div>
+        ) : null}
 
         <form className="form-stack" onSubmit={handleSubmit}>
           {isRegister ? (
@@ -83,6 +104,12 @@ export function AuthPage({ mode }) {
             {isRegister ? 'Đăng nhập ngay' : 'Đăng ký ngay'}
           </Link>
         </p>
+
+        {isGuest ? (
+          <button className="button ghost-button full-width" onClick={handleExitDemo} type="button">
+            Thoát guest demo
+          </button>
+        ) : null}
       </section>
     </div>
   );

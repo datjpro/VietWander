@@ -1,29 +1,42 @@
 ﻿import { Link } from 'react-router-dom';
+import { CollectionMiniMap } from '../components/CollectionMiniMap.jsx';
 import { EmptyState } from '../components/EmptyState.jsx';
 import { useAsyncData } from '../hooks/useAsyncData.js';
-import { getCheckins } from '../lib/api.js';
-import { demoCheckins } from '../lib/demo-data.js';
+import { getCheckins, getProvinces } from '../lib/api.js';
+import { demoCheckins, demoProvinces } from '../lib/demo-data.js';
 import { formatDate, groupLatestByProvince } from '../lib/utils.js';
 import { useAuth } from '../providers/AuthProvider.jsx';
 
 export function CollectionPage() {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, profile, refreshProfile, isGuest } = useAuth();
   const { data, loading, error, reload } = useAsyncData(
     async () => {
       if (!user) {
-        return [];
+        return {
+          checkins: [],
+          provinces: demoProvinces
+        };
       }
 
-      try {
-        const checkins = await getCheckins({ userId: user.uid, limit: 30 });
+      const [checkinsResult, provincesResult] = await Promise.allSettled([
+        getCheckins({ userId: user.uid, limit: 30 }),
+        getProvinces()
+      ]);
+
+      if (checkinsResult.status === 'fulfilled') {
         await refreshProfile();
-        return checkins;
-      } catch {
-        return demoCheckins.filter((item) => item.userId === user.uid);
       }
+
+      return {
+        checkins: checkinsResult.status === 'fulfilled' ? checkinsResult.value : demoCheckins.filter((item) => item.userId === user.uid),
+        provinces: provincesResult.status === 'fulfilled' ? provincesResult.value : demoProvinces
+      };
     },
     [user?.uid],
-    []
+    {
+      checkins: [],
+      provinces: demoProvinces
+    }
   );
 
   if (!user) {
@@ -42,20 +55,24 @@ export function CollectionPage() {
     );
   }
 
-  const groupedCheckins = groupLatestByProvince(data);
+  const groupedCheckins = groupLatestByProvince(data.checkins);
+  const visitedProvinceIds = groupedCheckins.map((item) => item.provinceId);
 
   return (
     <div className="page-section-stack">
       <section className="page-card">
-        <div className="section-heading-row">
+        <div className="section-heading-row wrap-row">
           <div>
             <p className="eyebrow">Đã đến</p>
             <h1>Bộ sưu tập check-in cá nhân</h1>
-            <p className="muted-copy">Mỗi tỉnh sẽ hiển thị check-in gần nhất của bạn.</p>
+            <p className="muted-copy">Mỗi tỉnh hiển thị check-in gần nhất của bạn, kèm mini map tiến độ để pitch demo dễ hơn.</p>
           </div>
-          <button className="button ghost-button" onClick={reload} type="button">
-            Tải lại
-          </button>
+          <div className="filter-bar">
+            {isGuest ? <span className="status-chip">Guest Demo</span> : null}
+            <button className="button ghost-button" onClick={reload} type="button">
+              Tải lại
+            </button>
+          </div>
         </div>
 
         <div className="stats-grid compact-grid">
@@ -69,12 +86,26 @@ export function CollectionPage() {
           </div>
           <div className="stat-card">
             <span>Check-in</span>
-            <strong>{profile?.verifiedCheckinCount || data.length}</strong>
+            <strong>{profile?.verifiedCheckinCount || data.checkins.length}</strong>
           </div>
         </div>
 
         {error ? <div className="banner warning-banner">{error}</div> : null}
         {loading ? <div className="banner info-banner">Đang tải bộ sưu tập...</div> : null}
+      </section>
+
+      <CollectionMiniMap provinces={data.provinces} visitedProvinceIds={visitedProvinceIds} />
+
+      <section className="page-card">
+        <div className="section-heading-row">
+          <div>
+            <p className="eyebrow">Latest per province</p>
+            <h2>Những chấm đã mở khóa</h2>
+          </div>
+          <Link className="inline-link" to="/checkin">
+            Tạo check-in mới
+          </Link>
+        </div>
 
         {groupedCheckins.length ? (
           <div className="province-grid">

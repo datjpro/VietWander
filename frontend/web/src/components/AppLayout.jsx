@@ -1,4 +1,5 @@
-﻿import { NavLink, Outlet } from 'react-router-dom';
+﻿import { useState } from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../providers/AuthProvider.jsx';
 
 const topNavItems = [
@@ -33,15 +34,27 @@ function MobileNavigation() {
 }
 
 export function AppLayout() {
-  const { user, profile, logout } = useAuth();
+  const { user, profile, logout, isGuest, demoModeEnabled, resetDemoData } = useAuth();
+  const [resettingDemo, setResettingDemo] = useState(false);
   const visitedProvinceCount = profile?.visitedProvinceCount || profile?.provincesVisited || 42;
   const verifiedCheckinCount = profile?.verifiedCheckinCount || 12;
   const provinceGoal = 63;
   const progressPercent = Math.min(100, Math.round((visitedProvinceCount / provinceGoal) * 100));
-  const travelerName = profile?.displayName || user?.displayName || 'Alex Nguyen';
+  const travelerName = profile?.displayName || user?.displayName || 'Demo Traveler';
   const travelerLevel = profile?.levelTitle || 'Lvl 24 Legend';
   const travelerAvatar = profile?.avatarUrl || user?.photoURL || '';
   const avatarLetter = travelerName.slice(0, 1).toUpperCase();
+
+  async function handleResetDemo() {
+    setResettingDemo(true);
+
+    try {
+      await resetDemoData();
+      window.location.assign('/');
+    } finally {
+      setResettingDemo(false);
+    }
+  }
 
   return (
     <div className="app-shell demo-layout">
@@ -50,7 +63,10 @@ export function AppLayout() {
           <div className="brand-mark demo-brand-mark">
             <span className="material-symbols-outlined">map</span>
           </div>
-          <h1 className="demo-brand-title">CheckViet</h1>
+          <div>
+            <h1 className="demo-brand-title">VietWander</h1>
+            <p className="demo-brand-subtitle">Cartoon travel demo</p>
+          </div>
         </div>
 
         <nav className="demo-topnav" aria-label="Primary">
@@ -58,6 +74,12 @@ export function AppLayout() {
         </nav>
 
         <div className="demo-topbar-actions">
+          {isGuest ? <span className="status-chip demo-mode-pill">Demo Mode</span> : null}
+          {demoModeEnabled ? (
+            <button className="button ghost-button compact-button" disabled={resettingDemo} onClick={handleResetDemo} type="button">
+              {resettingDemo ? 'Resetting...' : 'Reset demo'}
+            </button>
+          ) : null}
           <button className="demo-icon-button" type="button" aria-label="Notifications">
             <span className="material-symbols-outlined">notifications</span>
             <span className="demo-icon-dot" />
@@ -116,9 +138,23 @@ export function AppLayout() {
                 Continue
               </NavLink>
             </article>
+
+            {isGuest ? (
+              <article className="demo-insight-panel">
+                <p className="demo-panel-kicker">Guest Demo</p>
+                <h3>Flow đã mở sẵn</h3>
+                <p>Khách demo có thể mở collection, tạo check-in và reset toàn bộ dữ liệu chỉ với một nút.</p>
+              </article>
+            ) : null}
           </div>
 
           <div className="demo-sidebar-footer">
+            {demoModeEnabled ? (
+              <button className="demo-side-link" disabled={resettingDemo} onClick={handleResetDemo} type="button">
+                <span className="material-symbols-outlined">restart_alt</span>
+                <span>{resettingDemo ? 'Resetting demo...' : 'Reset demo data'}</span>
+              </button>
+            ) : null}
             <button className="demo-side-link" type="button">
               <span className="material-symbols-outlined">settings</span>
               <span>Settings</span>
@@ -126,7 +162,7 @@ export function AppLayout() {
             {user ? (
               <button className="demo-side-link danger-link" onClick={logout} type="button">
                 <span className="material-symbols-outlined">logout</span>
-                <span>Logout</span>
+                <span>{isGuest ? 'Exit demo' : 'Logout'}</span>
               </button>
             ) : (
               <NavLink className="demo-side-link" to="/login">

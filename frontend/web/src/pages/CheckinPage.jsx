@@ -1,15 +1,24 @@
 ﻿import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAsyncData } from '../hooks/useAsyncData.js';
 import { createCheckin, getProvinces } from '../lib/api.js';
 import { demoProvinces } from '../lib/demo-data.js';
-import { uploadCheckinImage } from '../lib/firebase.js';
+import { canUploadCheckinImages, uploadCheckinImage } from '../lib/firebase.js';
 import { slugify } from '../lib/utils.js';
 import { useAuth } from '../providers/AuthProvider.jsx';
 
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('Không thể đọc ảnh local để tạo demo check-in.'));
+    reader.readAsDataURL(file);
+  });
+}
+
 export function CheckinPage() {
   const navigate = useNavigate();
-  const { user, refreshProfile } = useAuth();
+  const { user, refreshProfile, isGuest } = useAuth();
   const { data: provinces } = useAsyncData(
     async () => {
       try {
@@ -61,6 +70,11 @@ export function CheckinPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    if (!user) {
+      setMessage('Bạn cần đăng nhập hoặc vào guest demo trước khi tạo check-in.');
+      return;
+    }
+
     setSubmitting(true);
     setMessage('Đang tạo check-in...');
 
@@ -68,7 +82,11 @@ export function CheckinPage() {
       let photoUrl = formState.photoUrl.trim();
 
       if (selectedFile) {
-        photoUrl = await uploadCheckinImage(selectedFile, user.uid);
+        if (isGuest || !canUploadCheckinImages) {
+          photoUrl = await readFileAsDataUrl(selectedFile);
+        } else {
+          photoUrl = await uploadCheckinImage(selectedFile, user.uid);
+        }
       }
 
       if (!photoUrl) {
@@ -104,13 +122,16 @@ export function CheckinPage() {
   return (
     <div className="page-section-stack">
       <section className="page-card">
-        <div className="section-heading-row">
+        <div className="section-heading-row wrap-row">
           <div>
             <p className="eyebrow">Check-in camera / upload</p>
             <h1>Tạo check-in mới</h1>
-            <p className="muted-copy">Web có thể dùng camera/file input và upload lên Firebase Storage trước khi gọi backend.</p>
+            <p className="muted-copy">Guest demo có thể dùng ảnh local trực tiếp; nếu có Firebase Storage thật thì app sẽ upload như flow production.</p>
           </div>
-          <span className="pill">{user?.email}</span>
+          <div className="filter-bar">
+            {isGuest ? <span className="status-chip">Guest Demo</span> : null}
+            <span className="pill">{user?.email || 'guest-demo'}</span>
+          </div>
         </div>
 
         <form className="checkin-layout" onSubmit={handleSubmit}>
@@ -155,6 +176,9 @@ export function CheckinPage() {
               {submitting ? 'Đang gửi...' : 'Xác nhận check-in'}
             </button>
             {message ? <div className="banner info-banner">{message}</div> : null}
+            {isGuest ? (
+              <p className="muted-copy small-copy">Trong guest demo, ảnh local sẽ được nhúng tạm vào dữ liệu demo để không phụ thuộc cloud upload.</p>
+            ) : null}
           </div>
 
           <div className="preview-card">
@@ -162,6 +186,14 @@ export function CheckinPage() {
             <h2>{selectedProvince?.fullName || selectedProvince?.name}</h2>
             <p className="muted-copy">{selectedProvince?.description}</p>
             <img alt={selectedProvince?.name || 'Preview'} className="preview-image" src={previewUrl || formState.photoUrl || selectedProvince?.imageUrl} />
+            <div className="hero-actions wrap-row">
+              <Link className="button ghost-button" to={`/province/${formState.provinceId}`}>
+                Xem tỉnh này
+              </Link>
+              <Link className="button ghost-button" to="/collection">
+                Mở collection
+              </Link>
+            </div>
           </div>
         </form>
       </section>
