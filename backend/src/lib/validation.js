@@ -1,4 +1,4 @@
-﻿import { badRequest } from './http-error.js';
+import { badRequest } from './http-error.js';
 
 export function parseLimit(value, fallbackValue = 20, maxValue = 100) {
   if (value === undefined) {
@@ -8,7 +8,7 @@ export function parseLimit(value, fallbackValue = 20, maxValue = 100) {
   const parsedValue = Number(value);
 
   if (!Number.isInteger(parsedValue) || parsedValue <= 0) {
-    throw badRequest('`limit` phải là số nguyên dương.');
+    throw badRequest('`limit` ph?i l� s? nguy�n duong.');
   }
 
   return Math.min(parsedValue, maxValue);
@@ -16,7 +16,7 @@ export function parseLimit(value, fallbackValue = 20, maxValue = 100) {
 
 export function requireString(value, fieldName) {
   if (typeof value !== 'string' || !value.trim()) {
-    throw badRequest(`Trường ${fieldName} là bắt buộc và phải là chuỗi.`);
+    throw badRequest(`Tru?ng ${fieldName} l� b?t bu?c v� ph?i l� chu?i.`);
   }
 
   return value.trim();
@@ -28,7 +28,7 @@ export function optionalString(value) {
   }
 
   if (typeof value !== 'string') {
-    throw badRequest('Dữ liệu chuỗi không hợp lệ.');
+    throw badRequest('D? li?u chu?i kh�ng h?p l?.');
   }
 
   return value.trim();
@@ -40,7 +40,7 @@ export function optionalArray(value, fieldName) {
   }
 
   if (!Array.isArray(value)) {
-    throw badRequest(`Trường ${fieldName} phải là array.`);
+    throw badRequest(`Tru?ng ${fieldName} ph?i l� array.`);
   }
 
   return value;
@@ -52,14 +52,18 @@ export function optionalGeoPoint(value) {
   }
 
   if (!value || typeof value !== 'object') {
-    throw badRequest('`location` phải là object gồm `lat` và `lng`.');
+    throw badRequest('`location` ph?i l� object g?m `lat` v� `lng`.');
   }
 
   const lat = Number(value.lat);
   const lng = Number(value.lng);
 
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-    throw badRequest('`location.lat` và `location.lng` phải là số hợp lệ.');
+    throw badRequest('`location.lat` v� `location.lng` ph?i l� s? h?p l?.');
+  }
+
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+    throw badRequest('`location` vu?t ngo�i ph?m vi t?a d? h?p l?.');
   }
 
   return { lat, lng };

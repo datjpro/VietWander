@@ -1,4 +1,8 @@
+import { auth } from './firebase.js';
+
 const runtimeConfig = globalThis.__VIETWANDER_CONFIG__ || {};
+const demoWriteIntentHeaderName = 'X-VietWander-Intent';
+const demoWriteIntentHeaderValue = 'web';
 
 function resolveDefaultApiBaseUrl() {
   if (runtimeConfig.VITE_API_BASE_URL) {
@@ -6,7 +10,7 @@ function resolveDefaultApiBaseUrl() {
   }
 
   if (typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname)) {
-    return 'http://localhost:4000';
+    return `http://${window.location.hostname}:4000`;
   }
 
   return '';
@@ -22,11 +26,31 @@ async function readJson(response) {
   return null;
 }
 
-async function request(path, options = {}) {
+async function buildAuthHeaders() {
+  if (!auth?.currentUser) {
+    return {};
+  }
+
+  try {
+    const idToken = await auth.currentUser.getIdToken();
+    return idToken ? { Authorization: `Bearer ${idToken}` } : {};
+  } catch {
+    return {};
+  }
+}
+
+async function request(path, options = {}, { useAuth = false } = {}) {
+  const method = (options.method || 'GET').toUpperCase();
+  const authHeaders = useAuth ? await buildAuthHeaders() : {};
   const response = await fetch(`${apiBaseUrl}${path}`, {
+    credentials: 'include',
     headers: {
       Accept: 'application/json',
       ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(method === 'GET' || method === 'HEAD'
+        ? {}
+        : { [demoWriteIntentHeaderName]: demoWriteIntentHeaderValue }),
+      ...authHeaders,
       ...(options.headers || {})
     },
     ...options
@@ -64,7 +88,7 @@ export async function getFeed({ provinceId = '', userId = '', limit = 10 } = {})
   if (provinceId) params.set('provinceId', provinceId);
   if (userId) params.set('userId', userId);
   if (limit) params.set('limit', String(limit));
-  const payload = await request(`/api/feed?${params.toString()}`);
+  const payload = await request(`/api/feed?${params.toString()}`, {}, { useAuth: Boolean(userId) });
   return payload.items || [];
 }
 
@@ -74,14 +98,18 @@ export async function getLeaderboard(limit = 10) {
 }
 
 export function getUser(userId) {
-  return request(`/api/users/${userId}`);
+  return request(`/api/users/${userId}`, {}, { useAuth: true });
 }
 
 export function upsertUser(userId, input) {
-  return request(`/api/users/${userId}`, {
-    method: 'PUT',
-    body: JSON.stringify(input)
-  });
+  return request(
+    `/api/users/${userId}`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(input)
+    },
+    { useAuth: true }
+  );
 }
 
 export async function getCheckins({ userId = '', provinceId = '', limit = 20 } = {}) {
@@ -89,19 +117,39 @@ export async function getCheckins({ userId = '', provinceId = '', limit = 20 } =
   if (userId) params.set('userId', userId);
   if (provinceId) params.set('provinceId', provinceId);
   if (limit) params.set('limit', String(limit));
-  const payload = await request(`/api/checkins?${params.toString()}`);
+  const payload = await request(`/api/checkins?${params.toString()}`, {}, { useAuth: Boolean(userId) });
   return payload.items || [];
 }
 
 export function createCheckin(input) {
-  return request('/api/checkins', {
-    method: 'POST',
-    body: JSON.stringify(input)
-  });
+  return request(
+    '/api/checkins',
+    {
+      method: 'POST',
+      body: JSON.stringify(input)
+    },
+    { useAuth: true }
+  );
 }
 
 export function bootstrapDemoData() {
-  return request('/api/bootstrap/demo-data', {
+  return request(
+    '/api/bootstrap/demo-data',
+    {
+      method: 'POST'
+    },
+    { useAuth: true }
+  );
+}
+
+export function createDemoSession() {
+  return request('/api/auth/demo-session', {
+    method: 'POST'
+  });
+}
+
+export function logoutApiSession() {
+  return request('/api/auth/logout', {
     method: 'POST'
   });
 }

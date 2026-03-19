@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../providers/AuthProvider.jsx';
 import { useI18n } from '../providers/I18nProvider.jsx';
@@ -50,6 +50,7 @@ export function AppLayout() {
   const travelerLevel = settings.levelTitle || t('common.travelerLevelFallback');
   const travelerAvatar = settings.avatarUrl || user?.photoURL || '';
   const avatarLetter = travelerName.slice(0, 1).toUpperCase();
+  const showResetDemo = demoModeEnabled && isGuest;
 
   async function handleResetDemo() {
     setResettingDemo(true);
@@ -81,7 +82,7 @@ export function AppLayout() {
 
         <div className="demo-topbar-actions">
           {isGuest ? <span className="status-chip demo-mode-pill">{t('app.demoMode')}</span> : null}
-          {demoModeEnabled ? (
+          {showResetDemo ? (
             <button className="button ghost-button compact-button" disabled={resettingDemo} onClick={handleResetDemo} type="button">
               {resettingDemo ? t('shell.resettingDemo') : t('shell.resetDemo')}
             </button>
@@ -128,9 +129,9 @@ export function AppLayout() {
               <p className="demo-panel-label">{t('shell.rareBadges')}</p>
               <h2>{verifiedCheckinCount}</h2>
               <div className="demo-badge-row">
-                <span>🏅</span>
-                <span>🌊</span>
-                <span>🌿</span>
+                <span>??</span>
+                <span>??</span>
+                <span>??</span>
                 <span>+8</span>
               </div>
             </article>
@@ -154,7 +155,7 @@ export function AppLayout() {
           </div>
 
           <div className="demo-sidebar-footer">
-            {demoModeEnabled ? (
+            {showResetDemo ? (
               <button className="demo-side-link" disabled={resettingDemo} onClick={handleResetDemo} type="button">
                 <span className="material-symbols-outlined">restart_alt</span>
                 <span>{resettingDemo ? t('shell.resetDemoDataLoading') : t('shell.resetDemoData')}</span>

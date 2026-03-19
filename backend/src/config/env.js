@@ -20,6 +20,17 @@ function parseBoolean(value, fallbackValue) {
   return ['1', 'true', 'yes', 'on'].includes(String(value).toLowerCase());
 }
 
+function parseCsv(value, fallbackValue = []) {
+  if (!value) {
+    return fallbackValue;
+  }
+
+  return String(value)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function readFirebaseConfigProjectId() {
   if (!process.env.FIREBASE_CONFIG) {
     return '';
@@ -43,6 +54,14 @@ function resolveFirebaseProjectId() {
   );
 }
 
+function resolveDemoAuthSecret() {
+  if (process.env.DEMO_AUTH_SECRET) {
+    return process.env.DEMO_AUTH_SECRET;
+  }
+
+  return process.env.NODE_ENV === 'production' ? '' : 'vietwander-demo-secret-dev-only';
+}
+
 export function isManagedFirebaseRuntime() {
   return Boolean(
     process.env.FUNCTION_TARGET ||
@@ -61,6 +80,21 @@ export const env = {
   firebasePrivateKey: (process.env.FIREBASE_PRIVATE_KEY ?? '').replace(/\\n/g, '\n'),
   firebaseStorageBucket: process.env.FIREBASE_STORAGE_BUCKET ?? '',
   useMemoryDatabase: parseBoolean(process.env.USE_MEMORY_DB, false),
+  trustProxy: parseBoolean(process.env.TRUST_PROXY, false),
+  allowedOrigins: parseCsv(process.env.ALLOWED_ORIGINS, []),
+  adminUids: parseCsv(process.env.ADMIN_UIDS, []),
+  demoAuthEnabled: parseBoolean(process.env.DEMO_AUTH_ENABLED, true),
+  demoAuthSecret: resolveDemoAuthSecret(),
+  sessionCookieName: process.env.SESSION_COOKIE_NAME ?? 'vietwander_session',
+  sessionCookieDomain: process.env.SESSION_COOKIE_DOMAIN ?? '',
+  sessionCookiePath: process.env.SESSION_COOKIE_PATH ?? '/',
+  sessionCookieSecure: parseBoolean(process.env.SESSION_COOKIE_SECURE, (process.env.NODE_ENV ?? 'development') === 'production'),
+  sessionCookieSameSite: process.env.SESSION_COOKIE_SAME_SITE ?? 'lax',
+  sessionCookieMaxAgeMs: parseNumber(process.env.SESSION_COOKIE_MAX_AGE_MS, 1000 * 60 * 60 * 6),
+  authRateLimitWindowMs: parseNumber(process.env.AUTH_RATE_LIMIT_WINDOW_MS, 60_000),
+  authRateLimitMax: parseNumber(process.env.AUTH_RATE_LIMIT_MAX, 20),
+  writeRateLimitWindowMs: parseNumber(process.env.WRITE_RATE_LIMIT_WINDOW_MS, 60_000),
+  writeRateLimitMax: parseNumber(process.env.WRITE_RATE_LIMIT_MAX, 120)
 };
 
 export function hasFirebaseAdminConfig() {

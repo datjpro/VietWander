@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAsyncData } from '../hooks/useAsyncData.js';
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js';
@@ -14,7 +14,7 @@ function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result || ''));
-    reader.onerror = () => reject(new Error('Không thể đọc ảnh local để tạo demo check-in.'));
+    reader.onerror = () => reject(new Error('Kh�ng th? d?c ?nh local d? t?o demo check-in.'));
     reader.readAsDataURL(file);
   });
 }
@@ -101,7 +101,6 @@ export function CheckinPage() {
       }
 
       await createCheckin({
-        userId: user.uid,
         provinceId: formState.provinceId,
         landmarkId: slugify(formState.landmarkName) || null,
         landmarkName: formState.landmarkName || selectedProvince?.landmarks?.[0]?.name || null,

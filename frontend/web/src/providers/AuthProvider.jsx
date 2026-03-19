@@ -1,9 +1,8 @@
-ï»¿import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { bootstrapDemoData, getUser, upsertUser } from '../lib/api.js';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { bootstrapDemoData, createDemoSession, getUser, logoutApiSession, upsertUser } from '../lib/api.js';
 import { demoGuestProfile, demoGuestUser, getDemoProfile } from '../lib/demo-data.js';
 import { loginWithEmail, logoutCurrentUser, observeAuth, registerWithEmail } from '../lib/firebase.js';
 import { readAppearanceSeed } from '../lib/settings.js';
-import { getLevelTitle } from '../lib/utils.js';
 
 const AuthContext = createContext(null);
 const runtimeConfig = globalThis.__VIETWANDER_CONFIG__ || {};
@@ -38,7 +37,7 @@ function createGuestUser(profile = demoGuestProfile) {
 }
 
 async function syncProfile(user) {
-  const displayName = user.displayName || user.email?.split('@')[0] || 'Du khÃ¡ch má»›i';
+  const displayName = user.displayName || user.email?.split('@')[0] || 'Du khách m?i';
   let existingProfile = null;
 
   try {
@@ -50,10 +49,7 @@ async function syncProfile(user) {
   const visitedProvinceCount = existingProfile?.visitedProvinceCount ?? existingProfile?.provincesVisited ?? 0;
   const payload = {
     displayName,
-    email: user.email || null,
-    avatarUrl: user.photoURL || null,
-    level: existingProfile?.level ?? 1,
-    levelTitle: existingProfile?.levelTitle ?? getLevelTitle(visitedProvinceCount)
+    avatarUrl: user.photoURL || null
   };
 
   if (!existingProfile?.preferences) {
@@ -65,7 +61,9 @@ async function syncProfile(user) {
   } catch {
     return {
       uid: user.uid,
-      ...payload,
+      displayName,
+      email: user.email || existingProfile?.email || null,
+      avatarUrl: payload.avatarUrl,
       photoURL: payload.avatarUrl,
       username: existingProfile?.username ?? null,
       bio: existingProfile?.bio ?? '',
@@ -73,7 +71,10 @@ async function syncProfile(user) {
       provincesVisited: visitedProvinceCount,
       visitedProvinceCount,
       verifiedCheckinCount: existingProfile?.verifiedCheckinCount ?? 0,
-      preferences: existingProfile?.preferences ?? payload.preferences ?? readAppearanceSeed()
+      badges: existingProfile?.badges ?? [],
+      preferences: existingProfile?.preferences ?? payload.preferences ?? readAppearanceSeed(),
+      level: existingProfile?.level ?? 1,
+      levelTitle: existingProfile?.levelTitle ?? 'Du khách'
     };
   }
 }
@@ -81,15 +82,7 @@ async function syncProfile(user) {
 async function ensureGuestProfile() {
   const payload = {
     displayName: demoGuestProfile.displayName,
-    email: demoGuestProfile.email,
     avatarUrl: demoGuestProfile.avatarUrl,
-    photoURL: demoGuestProfile.photoURL,
-    level: demoGuestProfile.level,
-    levelTitle: demoGuestProfile.levelTitle,
-    provincesVisited: demoGuestProfile.provincesVisited,
-    visitedProvinceCount: demoGuestProfile.visitedProvinceCount,
-    verifiedCheckinCount: demoGuestProfile.verifiedCheckinCount,
-    badges: demoGuestProfile.badges,
     username: demoGuestProfile.username,
     bio: demoGuestProfile.bio,
     homeProvinceId: demoGuestProfile.homeProvinceId,
@@ -111,6 +104,13 @@ export function AuthProvider({ children }) {
 
   async function activateGuestMode() {
     writeGuestPreference(true);
+
+    try {
+      await createDemoSession();
+    } catch {
+      // Fallback local demo v?n nên ti?p t?c d? không ch?n pitch/demo.
+    }
+
     const guestProfile = await ensureGuestProfile();
     const guestUser = createGuestUser(guestProfile);
     setAuthMode('guest');
@@ -207,6 +207,12 @@ export function AuthProvider({ children }) {
   }
 
   async function exitGuestMode() {
+    try {
+      await logoutApiSession();
+    } catch {
+      // Không c?n ch?n ngu?i dùng thoát demo n?u backend không ph?n h?i.
+    }
+
     writeGuestPreference(false);
     setAuthMode('signed-out');
     setUser(null);
@@ -232,6 +238,12 @@ export function AuthProvider({ children }) {
     if (authMode === 'guest') {
       await exitGuestMode();
       return;
+    }
+
+    try {
+      await logoutApiSession();
+    } catch {
+      // Có th? không có cookie demo, b? qua an toàn.
     }
 
     await logoutCurrentUser();
@@ -264,7 +276,7 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth pháº£i Ä‘Æ°á»£c dÃ¹ng bÃªn trong AuthProvider.');
+    throw new Error('useAuth ph?i du?c dùng bên trong AuthProvider.');
   }
   return context;
 }
